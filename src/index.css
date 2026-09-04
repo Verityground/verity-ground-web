@@ -1,110 +1,215 @@
 @import "tailwindcss";
 
 @layer base {
-  html, body {
-    background-color: #f8fbff;
-    color: #0f172a;
+  :root {
+    --bg-canvas: #08090a;
+    --card-bg: rgba(13, 16, 23, 0.72);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-border-hover: rgba(56, 189, 248, 0.4);
+    --accent-blue: #0284c7;
+    --accent-sky: #38bdf8;
+    --accent-cyan: #06b6d4;
   }
+
+  html, body {
+    background-color: #08090a;
+    color: #f1f5f9;
+    font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+  }
+
   * {
-    border-color: rgba(226, 232, 240, 0.8);
+    border-color: rgba(255, 255, 255, 0.08);
   }
 }
 
-/* Custom scrollbar */
+/* Linear-style smooth dark scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f0f6fc;
+  background: #08090a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(56, 189, 248, 0.4);
 }
 
-/* Subtle background glowing mesh on white-bluish background */
-.bg-radial-glow {
-  background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 65%),
-              radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 55%),
-              radial-gradient(circle at 10% 45%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
+/* ============================================================
+   LINEAR SPOTLIGHT & GLOW TRACKING BENTO CARDS
+   ============================================================ */
+
+.linear-bento-card {
+  position: relative;
+  background: rgba(13, 16, 23, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-panel {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+/* Border Spotlight overlay tracking cursor */
+.linear-bento-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    380px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+    rgba(56, 189, 248, 0.5),
+    rgba(2, 132, 199, 0.25) 30%,
+    rgba(255, 255, 255, 0.06) 60%,
+    transparent 80%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.35s ease;
 }
 
-.glass-panel-hover {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.glass-panel-hover:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(14, 165, 233, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px -6px rgba(14, 165, 233, 0.12);
-}
-
-/* 3D Perspective & Motion Utilities for Noomo-style Interaction */
-.perspective-1000 {
-  perspective: 1000px;
-}
-
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
+/* Subtle inner ambient glow tracking cursor */
+.linear-bento-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    480px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+    rgba(14, 165, 233, 0.08),
+    rgba(37, 99, 235, 0.04) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-.translate-z-10 {
-  transform: translateZ(10px);
+.linear-bento-card:hover::before,
+.linear-bento-card:hover::after {
+  opacity: 1;
 }
 
-.translate-z-20 {
-  transform: translateZ(20px);
+.linear-bento-card > * {
+  position: relative;
+  z-index: 3;
 }
 
-.translate-z-30 {
-  transform: translateZ(30px);
+.linear-bento-card:hover {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7),
+              0 0 30px -5px rgba(14, 165, 233, 0.12);
 }
 
-/* Noomo Agency Signature Curtain Wipe Page Transition */
-.noomo-curtain-strip {
-  will-change: transform;
-  transform-origin: bottom;
-  transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1);
+/* Glassmorphism Backdrop Filter Transition */
+.glass-backdrop-panel {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.noomo-curtain-strip.active {
-  transform: scaleY(1);
+.glass-backdrop-panel:hover {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 12px 32px -8px rgba(2, 132, 199, 0.18);
 }
 
-.noomo-curtain-strip.exit {
-  transform-origin: top;
-  transform: scaleY(0);
+/* ============================================================
+   MICRO-INTERACTIONS & FEEDBACK
+   ============================================================ */
+
+/* Micro-scale bounce feedback */
+.micro-bounce {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
-/* Smooth cubic bezier easing for smooth section transition */
-@keyframes noomoSlideUp {
+.micro-bounce:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.micro-bounce:active {
+  transform: scale(0.96);
+}
+
+/* Linear top rim glow beam */
+.linear-rim-beam {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(56, 189, 248, 0.3) 25%,
+    rgba(147, 197, 253, 0.8) 50%,
+    rgba(56, 189, 248, 0.3) 75%,
+    transparent 100%
+  );
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+  pointer-events: none;
+}
+
+/* Mesh wave background animations */
+@keyframes waveFlow {
   0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.98);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, 4%, 0) scale(1.06);
   }
   100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-wave-flow {
+  animation: waveFlow 24s ease-in-out infinite alternate;
+}
+
+@keyframes pulseSubtle {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 6s ease-in-out infinite;
+}
+
+/* Cascade entry animation */
+@keyframes cascadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-.animate-noomo-reveal {
-  animation: noomoSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.cascade-entry {
+  animation: cascadeSlideUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-
+/* Perspective utilities for 3D container */
+.perspective-container {
+  perspective: 1200px;
+}

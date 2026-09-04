@@ -212,8 +212,8 @@ export default function BinaryArithmeticBackground() {
         className="w-full h-full block opacity-60 mix-blend-multiply"
       />
       {/* Vignette & Radial Glow masks for light bluish-white theme */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#f8fbff]/85 via-transparent to-[#f8fbff] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_65%_55%_at_50%_40%,transparent_0%,rgba(248,251,255,0.9)_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#f8fbff]/30 via-transparent to-[#f8fbff]/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_50%,transparent_0%,rgba(248,251,255,0.45)_100%)] pointer-events-none" />
     </div>
   );
 }

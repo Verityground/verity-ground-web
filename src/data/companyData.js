@@ -1,124 +1,237 @@
 export const companyData = {
   name: "Verity Ground",
-  tagline: "Modern Software Studio & High-Performance Web Development Agency",
-  heroHeadline1: "Jasa Pembuatan",
-  heroHeadlineHighlight1: "Website & Aplikasi Web",
-  heroHeadlineHighlight2: "Modern & Berperforma Tinggi",
-  subHeadline: "Membantu bisnis, startup, dan enterprise membangun website cepat, web app skalabel, dan sistem kustom dengan standar engineering kelas dunia.",
+  tagline: "Audit, Compliance & Enterprise Risk Advisory",
+  heroBadge: "ENTERPRISE RISK & ASSURANCE STANDARDS",
+  heroHeadline1: "Audit Presisi. Kepatuhan Tanpa Cela.",
+  heroHeadlineHighlight1: "Mitigasi Risiko",
+  heroHeadlineHighlight2: "Terukur & Tepercaya",
+  subHeadline: "Firma konsultan terkemuka yang membantu institusi finansial, korporasi, dan perusahaan rintisan teknologi menavigasi kompleksitas regulasi, mengamankan tata kelola, dan membangun ketahanan risiko berstandar internasional.",
   whatsappNumber: "6285693131477",
-  whatsappMessage: "Halo Verity Ground, saya tertarik untuk konsultasi pembuatan proyek website/aplikasi.",
-  email: "verityground@gmail.com",
-  location: "Jakarta & Tangerang, Indonesia",
-  availability: "Menerima Proyek Baru (Q3 / Q4 2026)",
+  whatsappMessage: "Halo Verity Ground, saya tertarik untuk konsultasi audit, kepatuhan regulasi, atau tata kelola risiko.",
+  email: "contact@verityground.com",
+  location: "Financial District, SCBD Jakarta & Tangerang, Indonesia",
+  availability: "Menerima Audit & Risk Assessment (Q3 / Q4 2026)",
 
   trustHighlights: [
-    "Clean Code Standard",
-    "Free 90-Days Warranty",
-    "Dedicated Live Support"
+    "Big-4 Standard Methodology",
+    "ISO 27001 & SOC 2 Readiness",
+    "OJK, BI & Regulatory Alignment",
+    "Certified Auditors (CIA, CISA, CRISC)"
   ],
 
   stats: [
-    { id: "stat-1", value: "0", label: "Proyek Selesai", desc: "Produk web & app live" },
-    { id: "stat-2", value: "100%", label: "Client Satisfaction", desc: "Klien repeat & referral" },
-    { id: "stat-3", value: "< 1.2s", label: "Page Load Speed", desc: "Performa skor 95+ Lighthouse" },
-    { id: "stat-4", value: "24/7", label: "Monitoring & Support", desc: "Garansi pasca-peluncuran" },
+    { 
+      id: "stat-1", 
+      numericValue: 12.8, 
+      prefix: "Rp ", 
+      suffix: " T+", 
+      label: "Aset Diaudit & Diawasi", 
+      desc: "Portofolio institusi finansial & korporat" 
+    },
+    { 
+      id: "stat-2", 
+      numericValue: 99.98, 
+      prefix: "", 
+      suffix: "%", 
+      label: "Tingkat Kepatuhan Regulasi", 
+      desc: "Lolos uji kepatuhan OJK, BI & ISO" 
+    },
+    { 
+      id: "stat-3", 
+      numericValue: 0, 
+      prefix: "", 
+      suffix: " Temuan", 
+      label: "Material Risk Breach", 
+      desc: "Zero insiden risiko tidak termitigasi" 
+    },
+    { 
+      id: "stat-4", 
+      numericValue: 45, 
+      prefix: "", 
+      suffix: "+", 
+      label: "Kerangka Kerja Regulasi", 
+      desc: "Pemetaan regulasi lokal & global" 
+    }
   ],
 
-  services: [],
+  services: [
+    {
+      id: "service-audit",
+      badge: "ASSURANCE & INTEGRITY",
+      title: "Audit & Assurance Komprehensif",
+      shortDesc: "Evaluasi mendalam terhadap keandalan laporan, integritas sistem keuangan, dan audit teknologi informasi guna menjamin transparansi operasional.",
+      icon: "ShieldCheck",
+      progressMetric: {
+        label: "Akurasi Temuan & Verifikasi",
+        value: 99.4,
+        unit: "%"
+      },
+      features: [
+        "Audit Internal & Eksternal Tingkat Korporat",
+        "Audit Keamanan Sistem Informasi & Infrastruktur TI",
+        "Investigasi Fraud & Forensic Accounting",
+        "Penilaian Kontrol Internal berbasis COSO"
+      ],
+      frameworks: ["COSO", "ISACA", "IFRS", "IIA Standards"],
+      accentColor: "from-blue-500/20 via-sky-500/10 to-transparent"
+    },
+    {
+      id: "service-compliance",
+      badge: "REGULATORY COMPLIANCE",
+      title: "Kepatuhan & Tata Kelola Regulasi",
+      shortDesc: "Pendampingan kepatuhan holistik memastikan entitas Anda patuh terhadap regulasi OJK, Bank Indonesia, serta standar privasi data global.",
+      icon: "Scale",
+      progressMetric: {
+        label: "Kematangan Kepatuhan (Maturity Level)",
+        value: 5.0,
+        unit: " Level 5"
+      },
+      features: [
+        "Implementasi & Sertifikasi ISO 27001, ISO 37001 (SMAP)",
+        "Kesiapan Sertifikasi SOC 1 & SOC 2 Type II",
+        "Kepatuhan POJK & Surat Edaran Bank Indonesia",
+        "Perlindungan Data Pribadi (UU PDP & GDPR Compliance)"
+      ],
+      frameworks: ["ISO 27001", "SOC 2", "POJK", "UU PDP"],
+      accentColor: "from-cyan-500/20 via-blue-500/10 to-transparent"
+    },
+    {
+      id: "service-risk",
+      badge: "RISK GOVERNANCE",
+      title: "Manajemen Risiko Terpadu (ERM)",
+      shortDesc: "Identifikasi, kuantifikasi, dan mitigasi risiko operasional, siber, likuiditas, dan reputasi dengan metodologi kuantitatif mutakhir.",
+      icon: "Activity",
+      progressMetric: {
+        label: "Efikasi Mitigasi Risiko",
+        value: 98.7,
+        unit: "%"
+      },
+      features: [
+        "Desain & Evaluasi Enterprise Risk Management (ISO 31000)",
+        "Cybersecurity & Threat Vulnerability Risk Assessment",
+        "Business Continuity Management & Disaster Recovery (ISO 22301)",
+        "Vendor & Third-Party Risk Management (TPRM)"
+      ],
+      frameworks: ["ISO 31000", "NIST CSF", "COBIT", "ISO 22301"],
+      accentColor: "from-indigo-500/20 via-blue-500/10 to-transparent"
+    }
+  ],
 
   about: {
-    story: "Verity Ground adalah software studio independen yang berdedikasi membangun produk digital tanpa kompromi kualitas. Kami menggabungkan clean code, arsitektur modern, dan desain visual menawan untuk menciptakan produk yang tangguh dan skalabel.",
-    vision: "Menjadi mitra rekayasa perangkat lunak terpercaya yang mentransformasi ide bisnis menjadi solusi digital berkecepatan tinggi.",
+    story: "Verity Ground adalah firma konsultan independen yang berdedikasi membangun kepatuhan regulasi, tata kelola kontrol internal, dan manajemen risiko terintegrasi tanpa kompromi kualitas. Kami menggabungkan metodologi audit Big-4, keahlian forensik, dan kerangka kerja internasional untuk menciptakan ketahanan bisnis yang kokoh.",
+    vision: "Menjadi mitra audit dan tata kelola risiko tepercaya yang melindungi nilai institusi serta memastikan kepatuhan mutlak terhadap regulasi global dan domestik.",
     values: [
       {
         id: "val-1",
-        title: "Clean Code & Scalable",
-        desc: "Struktur kode rapi, modular, dan terdokumentasi dengan baik agar mudah dikembangkan di masa depan.",
-        icon: "CheckCircle2"
+        title: "Independensi & Standar Big-4",
+        desc: "Menjunjung integritas audit tanpa kompromi, mengadopsi standar IIA dan ISACA.",
+        icon: "Shield"
       },
       {
         id: "val-2",
-        title: "Transparansi Pengerjaan",
-        desc: "Komunikasi terbuka dan update berkala mengenai setiap milestone perkembangan proyek Anda.",
-        icon: "ShieldCheck"
+        title: "Kepatuhan Regulasi Multi-Yurisdiksi",
+        desc: "Pemetaan kepatuhan proaktif terhadap POJK, PBI, UU PDP, ISO 27001, dan GDPR.",
+        icon: "Landmark"
       },
       {
         id: "val-3",
-        title: "Garansi & Support",
-        desc: "Jaminan bebas bug dan pendampingan teknis setelah peluncuran untuk memastikan sistem stabil.",
-        icon: "HeartHandshake"
+        title: "Uji Penetrasi & Forensik Digital",
+        desc: "Investigasi mendalam terhadap arsitektur kontrol keuangan dan keamanan sistem informasi.",
+        icon: "FileSearch"
       },
       {
         id: "val-4",
-        title: "Deadline Terukur",
-        desc: "Manajemen pengerjaan disiplin memastikan setiap milestone selesai tepat waktu sesuai timeline.",
-        icon: "Clock"
+        title: "Pemantauan Risiko Prediktif",
+        desc: "Analitik kuantitatif mendeteksi anomali transaksi dan kerentanan kepatuhan secara dini.",
+        icon: "Lock"
       }
     ],
     workflow: [
-      { id: "wf-1", step: "01", title: "Discovery & Scope", desc: "Diskusi mendalam mengenai kebutuhan bisnis, target audiens, dan spesifikasi fitur." },
-      { id: "wf-2", step: "02", title: "UI/UX & Prototyping", desc: "Perancangan wireframe & antarmuka modern yang disetujui sebelum coding dimulai." },
-      { id: "wf-3", step: "03", title: "Agile Development", desc: "Penulisan kode clean, modular, dan integrasi fitur dengan update teratur." },
-      { id: "wf-4", step: "04", title: "QA & Deployment", desc: "Uji coba menyeluruh di berbagai perangkat, konfigurasi server, dan rilis resmi." }
+      { id: "wf-1", step: "01", title: "Diagnostic & Scoping", desc: "Analisis lanskap regulasi, pemetaan aset kritis, dan penetapan Audit Charter." },
+      { id: "wf-2", step: "02", title: "Controls & Gap Assessment", desc: "Pengujian kepatuhan terhadap kontrol ISO/OJK dan audit forensik data." },
+      { id: "wf-3", step: "03", title: "Remediation & Stress Testing", desc: "Penyusunan Corrective Action Plan (CAP) dan simulasi mitigasi risiko." },
+      { id: "wf-4", step: "04", title: "Final Assurance & Attestation", desc: "Penerbitan Laporan Audit Independen dan pendampingan formal di hadapan regulator." }
     ]
   },
 
-  portfolio: [
+  testimonials: [
     {
-      id: 1,
-      title: "FinPulse — Next-Gen Financial Operating System",
-      category: "Web App",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop",
-      shortDesc: "Platform analitik finansial real-time berbasis micro-frontend dengan visualisasi data interaktif, dashboard transaksi, dan integrasi multi-gateway.",
-      tech: ["React 19", "Tailwind CSS", "TypeScript", "Vite", "Recharts"],
-      demoUrl: "https://example.com",
-      client: "FinPulse Global",
-      metrics: "99.98% Uptime & 1.1s Load Time",
-      status: "Live Production"
+      id: "testi-1",
+      clientName: "PT Bank Nusantara Prima Tbk",
+      clientType: "Institusi Perbankan Tier-1",
+      quote: "Verity Ground merevolusi tata kelola audit internal kami. Penemuan risiko mereka sangat presisi dan rekomendasi mitigasi langsung dapat dieksekusi tanpa menghambat laju ekspansi produk digital kami.",
+      author: "Ir. Hendra Kusuma, MBA",
+      role: "Chief Risk Officer (CRO)",
+      verifiedMetric: "Lolos Audit Regulator 100% On-Time"
     },
     {
-      id: 2,
-      title: "OmniCart — Immersive E-Commerce & Retail Experience",
-      category: "E-Commerce",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
-      shortDesc: "Pusat belanja digital dengan checkout instan, manajemen stok terintegrasi, kalkulasi ongkir otomatis, dan antarmuka responsif ultra-cepat.",
-      tech: ["Next.js", "Node.js", "Stripe API", "Tailwind CSS"],
-      demoUrl: "https://example.com",
-      client: "Omni Retail Group",
-      metrics: "+140% Conversion Rate Uplift",
-      status: "Live Production"
+      id: "testi-2",
+      clientName: "FinPay Global Technologies",
+      clientType: "Fintech Payment Unicorn",
+      quote: "Pencapaian sertifikasi SOC 2 Type II dan ISO 27001 dalam waktu 4 bulan tidak mungkin tercapai tanpa pendampingan intensif dari Verity Ground. Standar dokumentasi dan pengujian kontrol mereka sangat teliti.",
+      author: "Clarissa Natalie, CFA",
+      role: "VP of Regulatory & Compliance",
+      verifiedMetric: "Sertifikasi SOC 2 Type II & ISO 27001"
     },
     {
-      id: 3,
-      title: "Karsa Enterprise — Intelligent Logistics & Fleet ERP",
-      category: "Sistem Kustom",
-      image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1000&auto=format&fit=crop",
-      shortDesc: "Sistem otomasi armada dan manajemen inventaris warehouse berskala enterprise dengan tracking GPS live dan analitik efisiensi rute pengiriman.",
-      tech: ["React", "PostgreSQL", "Tailwind CSS", "WebSockets"],
-      demoUrl: "https://example.com",
-      client: "Karsa Logistik Indonesia",
-      metrics: "Memangkas Waktu Operasional 42%",
-      status: "Live Production"
+      id: "testi-3",
+      clientName: "Sinar Medika Healthcare Group",
+      clientType: "Jaringan Rumah Sakit & Layanan Kesehatan",
+      quote: "Kepatuhan terhadap UU PDP dan perlindungan rekam medis digital menjadi prioritas tertinggi kami. Verity Ground menyusun peta audit kerentanan yang kokoh dan melindungi integritas data 3 juta pasien kami.",
+      author: "Dr. Budi Santoso, M.Kom",
+      role: "Head of Information Security & Governance",
+      verifiedMetric: "Zero Data Leakage & Full PDP Compliance"
+    }
+  ],
+
+  teamMembers: [
+    {
+      id: "team-1",
+      name: "Marcus Wardhana",
+      title: "Managing Partner & Head of Assurance",
+      certifications: ["CIA", "CPA", "CISA"],
+      experience: "16+ Tahun Pengalaman",
+      pastAffiliation: "Ex-Big 4 Senior Audit Leader",
+      specialty: "Forensic Audit & Financial System Governance",
+      quote: "Transparansi bukan sekadar kepatuhan di atas kertas; ini adalah pertahanan terkuat korporasi."
+    },
+    {
+      id: "team-2",
+      name: "Eleanor S. Rahardjo",
+      title: "Director of Regulatory Compliance",
+      certifications: ["CAMS", "GRCP", "ISO Lead Auditor"],
+      experience: "14+ Tahun Pengalaman",
+      pastAffiliation: "Ex-Regulatory Policy Advisor",
+      specialty: "OJK/BI Compliance, Anti-Financial Crime & ESG",
+      quote: "Regulasi yang dinamis memerlukan arsitektur kepatuhan yang adaptif dan proaktif."
+    },
+    {
+      id: "team-3",
+      name: "Dr. Adrian Pratama",
+      title: "Partner of Cyber Risk & Resilience",
+      certifications: ["CRISC", "CISSP", "CISM"],
+      experience: "12+ Tahun Pengalaman",
+      pastAffiliation: "Ex-Chief Information Security Officer",
+      specialty: "Enterprise Cyber Resilience & ISO 31000 ERM",
+      quote: "Risiko yang dipetakan dengan tepat adalah fondasi dari pengambilan keputusan bisnis yang berani."
     }
   ],
 
   faqs: [
     {
       id: "faq-1",
-      q: "Berapa lama estimasi pengerjaan proyek website / aplikasi?",
-      a: "Tergantung kompleksitas. Landing page umumnya memakan waktu 3-7 hari kerja, sedangkan Web App atau Sistem Kustom memakan waktu 2-6 minggu dengan milestone yang jelas."
+      q: "Bagaimana proses awal penugasan audit atau risk assessment dengan Verity Ground?",
+      a: "Kami memulai dengan Preliminary Scope & Maturity Assessment (1-2 hari kerja) untuk memahami ekosistem bisnis dan lanskap regulasi Anda, diikuti penyusunan Audit Charter / Risk Blueprint sebelum penugasan resmi."
     },
     {
       id: "faq-2",
-      q: "Apakah website yang dibuat sudah SEO-friendly dan cepat?",
-      a: "Ya, kami mengutamakan performa loading instan (< 1.5 detik), clean structure, semantic HTML, dan optimasi Core Web Vitals untuk Google."
+      q: "Apakah Verity Ground siap mendampingi audit kepatuhan spesifik seperti OJK, BI, atau ISO?",
+      a: "Tentu. Seluruh tim lead auditor kami memegang sertifikasi internasional (CIA, CISA, CRISC, ISO 27001 Lead Auditor) dengan rekam jejak mendampingi bank BUKU IV, fintech payment, dan korporasi terbuka."
     },
     {
       id: "faq-3",
-      q: "Apakah ada garansi setelah website selesai dibuat?",
-      a: "Setiap proyek kami lengkapi dengan garansi perbaikan bug dan pemeliharaan teknis gratis setelah serah terima proyek."
+      q: "Berapa lama jangka waktu typical engagement untuk kesiapan sertifikasi regulasi?",
+      a: "Bergantung pada kompleksitas institusi. Kesiapan audit komprehensif atau sertifikasi standar (seperti ISO 27001 / SOC 2) biasanya berlangsung antara 6 hingga 14 minggu dengan pemantauan milestone mingguan."
     }
   ]
 };
-
-

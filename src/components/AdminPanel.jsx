@@ -13,6 +13,7 @@ export default function AdminPanel() {
     isAdminOpen,
     setIsAdminOpen,
     isAuthenticated,
+    isCloudSynced,
     loginAdmin,
     logoutAdmin,
     // Portfolio
@@ -372,11 +373,11 @@ export default function AdminPanel() {
   if (!isAdminOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-[85] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fade-in">
       
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] bg-emerald-500 text-zinc-950 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl shadow-emerald-500/30">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[90] bg-emerald-500 text-zinc-950 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl shadow-emerald-500/30">
           <Check className="w-4 h-4" />
           <span>{notification}</span>
         </div>
@@ -396,6 +397,14 @@ export default function AdminPanel() {
                 Verity Ground Admin Control
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                   Custom CMS
+                </span>
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded flex items-center gap-1 border ${
+                  isCloudSynced
+                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/30'
+                    : 'bg-amber-950/60 text-amber-400 border-amber-500/30'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${isCloudSynced ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                  {isCloudSynced ? 'Cloud Connected' : 'Connecting Cloud...'}
                 </span>
               </h2>
               <p className="text-xs text-zinc-400 font-mono hidden sm:block">Kelola portofolio, layanan, alur pengerjaan, dan kontak</p>

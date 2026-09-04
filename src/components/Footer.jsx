@@ -1,74 +1,95 @@
-import React from 'react';
-import { Terminal, ArrowUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, ArrowUp, CheckCircle2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
-import { useTransition } from '../context/TransitionContext';
 
 export default function Footer() {
-  const { data } = useData();
-  const { navigateTo } = useTransition();
+  const { data, setIsAdminOpen } = useData();
+  const [tapCount, setTapCount] = useState(0);
+
+  const handleSecretTap = () => {
+    setTapCount((prev) => {
+      const next = prev + 1;
+      if (next >= 3) {
+        setIsAdminOpen(true);
+        return 0;
+      }
+      return next;
+    });
+    setTimeout(() => setTapCount(0), 1500);
+  };
 
   const scrollToTop = () => {
-    navigateTo('#top', 'Back to Top');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navLinks = [
-    { name: 'About Us', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Tentang Kami', href: '#about' },
+    { name: 'Layanan', href: '#services' },
+    { name: 'Testimoni', href: '#testimonials' },
+    { name: 'Dewan Auditor', href: '#team' },
   ];
 
   return (
-    <footer className="bg-[#f8fbff] border-t border-slate-200/80 py-12 text-slate-600 text-sm relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    <footer className="relative border-t border-white/[0.08] bg-[#08090a]/90 backdrop-blur-xl py-14 text-slate-400 text-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        {/* Top Footer Row */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-200">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-xs">
-              <Terminal className="w-5 h-5" />
+        {/* Top Row */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-white/[0.06]">
+          
+          {/* Brand Info */}
+          <div className="flex items-center gap-3 micro-bounce select-none">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shadow-md">
+              <Shield className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-base font-bold text-slate-900 tracking-tight">{data.name}</span>
-              <p className="text-xs text-slate-500 font-mono">Modern Software Studio & Engineering Agency</p>
+              <span className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                {data.name}
+              </span>
+              <p className="text-xs text-slate-500 font-mono">
+                Enterprise Audit, Compliance & Risk Advisory
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6 text-xs font-medium">
+          {/* Quick Nav Links with micro-bounce */}
+          <div className="flex flex-wrap items-center gap-6 text-xs font-mono">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo(link.href, link.name);
-                }}
-                className="text-slate-600 hover:text-slate-950 transition-colors cursor-pointer"
+                className="text-slate-400 hover:text-white transition-colors micro-bounce inline-block"
               >
                 {link.name}
               </a>
             ))}
           </div>
 
+          {/* Back to top button */}
           <button
             onClick={scrollToTop}
-            className="p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-950 border border-slate-200 transition-colors flex items-center gap-1.5 text-xs font-mono cursor-pointer shadow-xs"
+            className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] transition-all flex items-center gap-2 text-xs font-mono micro-bounce cursor-pointer"
             aria-label="Back to top"
           >
-            <span>Back to top</span>
-            <ArrowUp className="w-4 h-4" />
+            <span>Kembali ke Atas</span>
+            <ArrowUp className="w-3.5 h-3.5" />
           </button>
+
         </div>
 
-        {/* Bottom Footer Row */}
+        {/* Bottom Row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
-          <p>© {new Date().getFullYear()} {data.name}. All rights reserved.</p>
-          <div className="flex items-center gap-2">
-            <span>Built with React, Vite & Tailwind CSS</span>
-            <span>•</span>
-            <span className="text-emerald-700 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              All Systems Operational
+          <p
+            onClick={handleSecretTap}
+            className="cursor-pointer select-none active:opacity-75 transition-opacity hover:text-slate-400"
+            title="Ketuk 3x untuk membuka Portal Konfigurasi"
+          >
+            © {new Date().getFullYear()} {data.name}. Seluruh Hak Cipta Dilindungi Undang-Undang.
+          </p>
+
+          <div className="flex items-center gap-3">
+            <span className="text-emerald-400 font-medium flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Audit & Assurance Network: Active</span>
             </span>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Layers, X, CheckCircle2, ArrowUpRight, Sparkles, Eye } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
@@ -167,8 +168,14 @@ function ProjectCard({ project, onSelect }) {
 
             <a
               href={project.demoUrl || '#'}
-              target="_blank"
+              target={project.demoUrl && project.demoUrl !== '#' ? '_blank' : undefined}
               rel="noopener noreferrer"
+              onClick={(e) => {
+                if (!project.demoUrl || project.demoUrl === '#') {
+                  e.preventDefault();
+                  onSelect(project);
+                }
+              }}
               className="py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/80 hover:border-emerald-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 shadow-xs group/btn cursor-pointer"
             >
               <span>Live Demo</span>
@@ -193,10 +200,29 @@ export default function Portfolio() {
     ? data.portfolio
     : data.portfolio?.filter((p) => p.category === activeCategory);
 
+  // Close modal on Escape key and prevent background scroll when modal is active
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedProject(null);
+      }
+    };
+
+    if (selectedProject) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [selectedProject]);
+
   return (
     <section
       id="portfolio"
-      className="py-24 bg-[#f8fbff] border-t border-slate-200/80 relative overflow-hidden select-none sm:select-auto"
+      className="py-24 bg-transparent border-t border-slate-200/80 relative overflow-hidden select-none sm:select-auto scroll-mt-24"
     >
       {/* Subtle Background Glow Orbs */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -253,7 +279,7 @@ export default function Portfolio() {
         )}
 
         {/* Portfolio 3D Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-9">
+        <div className={`grid gap-8 sm:gap-9 ${filteredProjects?.length === 1 ? 'max-w-xl mx-auto grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
           {filteredProjects?.map((project) => (
             <ProjectCard
               key={project.id}
@@ -265,36 +291,47 @@ export default function Portfolio() {
 
       </div>
 
-      {/* Project Detail Modal */}
-      {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+      {/* Project Detail Modal - Mounted directly onto body via createPortal to prevent transform clipping */}
+      {selectedProject && createPortal(
+        <div
+          onClick={() => setSelectedProject(null)}
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 bg-slate-950/75 backdrop-blur-md animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl animate-noomo-reveal"
+          >
+            {/* Close Button X */}
             <button
               onClick={() => setSelectedProject(null)}
-              className="absolute top-5 right-5 p-2.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 border border-slate-200 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2.5 rounded-full bg-white/95 text-slate-600 hover:text-slate-950 hover:bg-slate-100 border border-slate-200/90 shadow-md transition-all z-30 cursor-pointer hover:scale-105 active:scale-95"
               aria-label="Close modal"
+              title="Tutup Modal (Esc)"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="space-y-6">
-              <div className="rounded-2xl overflow-hidden border border-slate-200 h-64 w-full bg-slate-900 relative">
+              <div className="rounded-2xl overflow-hidden border border-slate-200 h-60 sm:h-72 w-full bg-slate-900 relative">
                 <img
                   src={selectedProject.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop'}
                   alt={selectedProject.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent" />
-                <div className="absolute bottom-4 left-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 flex items-center gap-2">
                   <span className="px-3 py-1 rounded-full bg-slate-900/90 text-white text-xs font-mono border border-white/20">
                     {selectedProject.category}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-emerald-950/90 text-emerald-300 text-xs font-mono border border-emerald-500/40">
+                    {selectedProject.status || 'Live Production'}
                   </span>
                 </div>
               </div>
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-mono text-emerald-700 font-semibold">{selectedProject.client || 'Partner'}</span>
+                  <span className="text-xs font-mono text-emerald-700 font-semibold">{selectedProject.client ? `Klien: ${selectedProject.client}` : 'Showcase Study'}</span>
                   <span className="text-xs font-mono text-slate-400">•</span>
                   <span className="text-xs font-mono text-slate-500">{selectedProject.status || 'Live Production'}</span>
                 </div>
@@ -335,19 +372,22 @@ export default function Portfolio() {
                 >
                   Tutup
                 </button>
-                <a
-                  href={selectedProject.demoUrl || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold text-xs flex items-center gap-2 hover:bg-emerald-500 transition-colors shadow-md shadow-emerald-600/20 cursor-pointer"
-                >
-                  <span>Kunjungi Live URL</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </a>
+                {selectedProject.demoUrl && selectedProject.demoUrl !== '#' && (
+                  <a
+                    href={selectedProject.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold text-xs flex items-center gap-2 hover:bg-emerald-500 transition-colors shadow-md shadow-emerald-600/20 cursor-pointer"
+                  >
+                    <span>Kunjungi Live URL</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

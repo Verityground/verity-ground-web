@@ -1,128 +1,134 @@
-import React from 'react';
-import { Code2, LayoutTemplate, Cpu, Wrench, Check, ArrowRight, Layers, Smartphone, Database, Cloud } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldCheck, Scale, Activity, ArrowRight, CheckCircle2, FileCheck, Layers, ChevronRight } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import BentoSpotlightCard from './BentoSpotlightCard';
 
 export default function Services() {
   const { data } = useData();
+  const [selectedServiceId, setSelectedServiceId] = useState(null);
 
   const iconMap = {
-    Code2: Code2,
-    LayoutTemplate: LayoutTemplate,
-    Cpu: Cpu,
-    Wrench: Wrench,
-    Layers: Layers,
-    Smartphone: Smartphone,
-    Database: Database,
-    Cloud: Cloud,
+    ShieldCheck: ShieldCheck,
+    Scale: Scale,
+    Activity: Activity,
   };
 
+  const services = data.services || [];
+
   return (
-    <section id="services" className="py-20 bg-[#f8fbff] border-t border-slate-200/80 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="services" className="py-24 relative border-t border-white/[0.06] scroll-mt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-700 mb-3 shadow-xs">
-            <span>OUR CORE SERVICES</span>
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-xs font-mono text-sky-400">
+            <Layers className="w-3.5 h-3.5" />
+            <span className="tracking-wider uppercase">Pilar Layanan Utama</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
-            Solusi Rekayasa Web & Perangkat Lunak Sesuai Kebutuhan Anda
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+            Audit Presisi, Kepatuhan Regulasi & Rekayasa Risiko
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base mt-4">
-            Kami menghadirkan solusi teknologi mutakhir dengan arsitektur tangguh, performa kilat, dan desain yang memikat.
+          <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            Arsitektur tata kelola menyeluruh yang dirancang untuk melindungi nilai entitas bisnis, mengamankan lisensi regulasi, dan memperkuat integritas data.
           </p>
         </div>
 
-        {/* Empty State */}
-        {(!data.services || data.services.length === 0) && (
-          <div className="text-center py-16 px-4 max-w-md mx-auto glass-panel rounded-3xl space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mx-auto">
-              <Code2 className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Layanan Sedang Diperbarui</h3>
-              <p className="text-xs text-slate-600 mt-1">
-                Daftar paket layanan kami sedang dalam penyesuaian. Silakan hubungi kami langsung via WhatsApp untuk penawaran kustom.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Dynamic Services Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {data.services?.map((service) => {
-            const Icon = iconMap[service.icon] || Code2;
-            const waCustomMsg = `Halo ${data.name}, saya ingin konsultasi mengenai layanan ${service.title}.`;
-            const waServiceLink = `https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(waCustomMsg)}`;
+        {/* Bento Grid Services with Glassmorphism Backdrop Filter Transitions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {services.map((service, index) => {
+            const Icon = iconMap[service.icon] || ShieldCheck;
+            const isExpanded = selectedServiceId === service.id;
+            const waCustomMsg = `Halo Verity Ground, saya ingin berdiskusi mengenai layanan ${service.title}.`;
+            const waLink = `https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(waCustomMsg)}`;
 
             return (
-              <div
+              <BentoSpotlightCard
                 key={service.id}
-                className="glass-panel p-7 sm:p-8 rounded-3xl glass-panel-hover flex flex-col justify-between relative overflow-hidden group shadow-sm"
+                className="p-7 sm:p-8 flex flex-col justify-between glass-backdrop-panel group relative"
               >
-                {/* Top Subtle Gradient Light */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all pointer-events-none" />
+                {/* Top Subtle Rim Gradient */}
+                <div className="absolute top-0 right-0 w-40 h-40 bg-sky-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-sky-500/20 transition-all duration-500" />
 
                 <div>
+                  {/* Top Bar: Icon & Badge */}
                   <div className="flex items-start justify-between mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-emerald-600 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-colors shadow-xs">
+                    <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-sky-400 group-hover:border-sky-400/50 group-hover:bg-sky-500/10 group-hover:scale-105 transition-all duration-300 shadow-lg">
                       <Icon className="w-7 h-7" />
                     </div>
-                    {service.badge && (
-                      <span className="text-[11px] font-mono font-medium px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">
-                        {service.badge}
-                      </span>
-                    )}
+
+                    <span className="text-[10px] font-mono tracking-wider font-semibold px-3 py-1 rounded-full bg-white/[0.04] text-sky-300 border border-white/[0.08]">
+                      {service.badge}
+                    </span>
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">
+                  {/* Title & Description */}
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-sky-300 transition-colors duration-200">
                     {service.title}
                   </h3>
-
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6">
+                  <p className="text-sm text-slate-400 leading-relaxed mb-6">
                     {service.shortDesc}
                   </p>
 
-                  {/* Features List */}
-                  {service.features && service.features.length > 0 && (
-                    <div className="space-y-2.5 mb-6 pt-4 border-t border-slate-200/80">
-                      <div className="text-xs font-mono uppercase tracking-wider text-slate-500 font-medium">Fitur & Cakupan:</div>
-                      {service.features.map((feat, idx) => (
-                        <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
-                          <div className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mt-0.5 shrink-0">
-                            <Check className="w-3 h-3" />
-                          </div>
-                          <span>{feat}</span>
-                        </div>
-                      ))}
+                  {/* Dynamic Progress Metric Bar */}
+                  {service.progressMetric && (
+                    <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] mb-6 space-y-2 backdrop-blur-md group-hover:border-sky-500/30 transition-colors">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="text-slate-400">{service.progressMetric.label}</span>
+                        <span className="text-sky-400 font-bold text-sm">
+                          {service.progressMetric.value}{service.progressMetric.unit}
+                        </span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-sky-500 to-blue-600 rounded-full transition-all duration-1000 ease-out"
+                          style={{
+                            width: typeof service.progressMetric.value === 'number'
+                              ? `${Math.min(service.progressMetric.value > 10 ? service.progressMetric.value : service.progressMetric.value * 20, 100)}%`
+                              : '95%'
+                          }}
+                        />
+                      </div>
                     </div>
                   )}
+
+                  {/* Scope & Features Checklist */}
+                  <div className="space-y-2.5 mb-6 pt-4 border-t border-white/[0.08]">
+                    <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-medium">
+                      Cakupan Penugasan:
+                    </div>
+                    {service.features?.map((feat, fIdx) => (
+                      <div key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-300">
+                        <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                        <span className="leading-snug">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Tech Badges & CTA */}
-                <div className="pt-5 border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+                {/* Framework Badges & Interactive CTA */}
+                <div className="pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex flex-wrap gap-1.5">
-                    {service.techStack?.map((tech, idx) => (
+                    {service.frameworks?.map((fw, fwIdx) => (
                       <span
-                        key={idx}
-                        className="text-[11px] font-mono px-2.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200"
+                        key={fwIdx}
+                        className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-white/[0.04] text-slate-300 border border-white/[0.08]"
                       >
-                        {tech}
+                        {fw}
                       </span>
                     ))}
                   </div>
 
                   <a
-                    href={waServiceLink}
+                    href={waLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors shrink-0 group/link"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-sky-400 hover:text-sky-300 transition-colors group/link shrink-0"
                   >
-                    <span>Konsultasikan</span>
+                    <span>Konsultasi Lingkup</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
                   </a>
                 </div>
-              </div>
+              </BentoSpotlightCard>
             );
           })}
         </div>

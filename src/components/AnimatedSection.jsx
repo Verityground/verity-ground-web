@@ -14,11 +14,12 @@ export default function AnimatedSection({ children, className = '' }) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          observer.disconnect();
         }
       },
       {
-        threshold: 0.12,
-        rootMargin: '0px 0px -50px 0px'
+        threshold: 0.02,
+        rootMargin: '120px 0px 50px 0px'
       }
     );
 
@@ -28,7 +29,7 @@ export default function AnimatedSection({ children, className = '' }) {
     }
 
     return () => {
-      if (currentEl) observer.unobserve(currentEl);
+      observer.disconnect();
     };
   }, []);
 

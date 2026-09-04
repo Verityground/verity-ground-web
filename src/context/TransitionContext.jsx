@@ -50,51 +50,47 @@ export function TransitionProvider({ children }) {
   return (
     <TransitionContext.Provider value={{ navigateTo, isTransitioning, phase, sectionLabel }}>
       {children}
-      {/* Fullscreen Noomo-style Curtain Transition Overlay */}
-      <div
-        className={`fixed inset-0 z-50 pointer-events-none ${
-          isTransitioning ? 'pointer-events-auto' : ''
-        }`}
-        aria-hidden="true"
-      >
-        {/* Multi-staggered Curtain Columns */}
-        <div className="absolute inset-0 flex">
-          {[0, 1, 2, 3, 4].map((colIndex) => {
-            const delay = phase === 'enter' ? colIndex * 50 : colIndex * 40;
-            return (
-              <div
-                key={colIndex}
-                className={`flex-1 bg-slate-950 border-r border-slate-900/50 noomo-curtain-strip ${
-                  phase === 'enter'
-                    ? 'scale-y-100 origin-bottom'
-                    : phase === 'exit'
-                    ? 'scale-y-0 origin-top'
-                    : 'scale-y-0 origin-bottom'
-                }`}
-                style={{
-                  transitionDelay: `${delay}ms`
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* Center Agency Headline & Indicator */}
+      {/* Fullscreen Curtain Transition Overlay */}
+      {isTransitioning && (
         <div
-          className={`absolute inset-0 flex flex-col items-center justify-center text-center transition-all duration-300 z-10 ${
-            phase === 'enter' ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-          }`}
+          className="fixed inset-0 z-[100] pointer-events-auto"
+          aria-hidden="true"
         >
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-mono text-xs uppercase tracking-widest mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>VERITY GROUND • STUDIO</span>
+          {/* Multi-staggered Curtain Columns */}
+          <div className="absolute inset-0 flex">
+            {[0, 1, 2, 3, 4].map((colIndex) => {
+              const delay = phase === 'enter' ? colIndex * 50 : colIndex * 40;
+              return (
+                <div
+                  key={colIndex}
+                  className="flex-1 bg-slate-950 border-r border-slate-900/50 transition-transform duration-500 ease-out"
+                  style={{
+                    transform: phase === 'enter' ? 'scaleY(1)' : 'scaleY(0)',
+                    transformOrigin: phase === 'enter' ? 'bottom' : 'top',
+                    transitionDelay: `${delay}ms`
+                  }}
+                />
+              );
+            })}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-mono uppercase tracking-tight">
-            {sectionLabel || 'NAVIGATING'}
-          </h2>
-          <div className="w-12 h-0.5 bg-emerald-500 mt-4 rounded-full animate-pulse" />
+
+          {/* Center Agency Headline & Indicator */}
+          <div
+            className={`absolute inset-0 flex flex-col items-center justify-center text-center transition-all duration-300 z-10 ${
+              phase === 'enter' ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+            }`}
+          >
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/80 border border-sky-500/40 text-sky-400 font-mono text-xs uppercase tracking-widest mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+              <span>VERITY GROUND • ADVISORY</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-mono uppercase tracking-tight">
+              {sectionLabel || 'NAVIGATING'}
+            </h2>
+            <div className="w-12 h-0.5 bg-sky-500 mt-4 rounded-full animate-pulse" />
+          </div>
         </div>
-      </div>
+      )}
     </TransitionContext.Provider>
   );
 }
