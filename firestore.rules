@@ -10,23 +10,23 @@ service cloud.firestore {
     // Collection: content
     // Document ID: company
     // Fields:
-    //   - name: string (required, size <= 100)
-    //   - email: string (required, size <= 100)
-    //   - whatsappNumber: string (required, size <= 30)
-    //   - tagline: string (optional, size <= 200)
-    //   - heroHeadline1: string (optional, size <= 100)
-    //   - heroHeadlineHighlight1: string (optional, size <= 100)
-    //   - heroHeadlineHighlight2: string (optional, size <= 100)
-    //   - subHeadline: string (optional, size <= 500)
-    //   - whatsappMessage: string (optional, size <= 500)
-    //   - location: string (optional, size <= 100)
-    //   - availability: string (optional, size <= 100)
-    //   - trustHighlights: list (required, size <= 20)
-    //   - stats: list (required, size <= 20)
-    //   - services: list (required, size <= 50)
-    //   - portfolio: list (required, size <= 100)
+    //   - name: string (required, size <= 150)
+    //   - email: string (required, size <= 150)
+    //   - whatsappNumber: string (required, size <= 50)
+    //   - tagline: string (optional, size <= 300)
+    //   - heroHeadline1: string (optional, size <= 200)
+    //   - heroHeadlineHighlight1: string (optional, size <= 200)
+    //   - heroHeadlineHighlight2: string (optional, size <= 200)
+    //   - subHeadline: string (optional, size <= 1000)
+    //   - whatsappMessage: string (optional, size <= 1000)
+    //   - location: string (optional, size <= 200)
+    //   - availability: string (optional, size <= 200)
+    //   - trustHighlights: list (required, size <= 50)
+    //   - stats: list (required, size <= 50)
+    //   - services: list (required, size <= 100)
+    //   - portfolio: list (required, size <= 200)
     //   - about: map (required)
-    //   - faqs: list (optional, size <= 50)
+    //   - faqs: list (optional, size <= 100)
     //   - updatedAt: string or timestamp (optional)
     //
     // ===============================================================
@@ -46,12 +46,12 @@ service cloud.firestore {
 
     function isValidCompanyData(data) {
       return hasRequiredFields(data) &&
-        data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
-        data.email is string && data.email.size() > 0 && data.email.size() <= 100 &&
-        data.whatsappNumber is string && data.whatsappNumber.size() > 0 && data.whatsappNumber.size() <= 30 &&
-        data.stats is list && data.stats.size() <= 20 &&
-        data.services is list && data.services.size() <= 50 &&
-        data.portfolio is list && data.portfolio.size() <= 100 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 150 &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 150 &&
+        data.whatsappNumber is string && data.whatsappNumber.size() > 0 && data.whatsappNumber.size() <= 50 &&
+        data.stats is list && data.stats.size() <= 50 &&
+        data.services is list && data.services.size() <= 100 &&
+        data.portfolio is list && data.portfolio.size() <= 200 &&
         data.about is map;
     }
 

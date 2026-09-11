@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, LayoutTemplate, Cpu, Wrench, Check, ArrowRight, Layers, Smartphone, Database, Cloud } from 'lucide-react';
+import { Code2, LayoutTemplate, Cpu, Wrench, ArrowRight, Layers, Smartphone, Database, Cloud } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
 export default function Services() {
@@ -17,39 +17,37 @@ export default function Services() {
   };
 
   return (
-    <section id="services" className="py-20 bg-transparent border-t border-slate-800/80 relative">
+    <section id="services" className="py-24 md:py-32 bg-transparent border-b border-zinc-800/40 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0073ea]/15 border border-[#0073ea]/35 text-xs font-mono text-[#0073ea] mb-3 shadow-xs">
-            <span>OUR CORE SERVICES</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-            Solusi Rekayasa Web & Perangkat Lunak Sesuai Kebutuhan Anda
+        <div className="max-w-3xl mb-16 space-y-4">
+          <span className="text-xs font-medium uppercase tracking-widest text-zinc-500">
+            Services
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            Solusi Rekayasa Web & Perangkat Lunak Skalabel
           </h2>
-          <p className="text-slate-300 text-sm sm:text-base mt-4">
-            Kami menghadirkan solusi teknologi mutakhir dengan arsitektur tangguh, performa kilat, dan desain yang memikat.
+          <p className="text-zinc-400 text-base sm:text-lg leading-relaxed">
+            Kami membangun arsitektur digital berperforma kilat, modular, aman, dan siap scale-up untuk bisnis modern.
           </p>
         </div>
 
         {/* Empty State */}
         {(!data.services || data.services.length === 0) && (
-          <div className="text-center py-16 px-4 max-w-md mx-auto glass-panel rounded-3xl space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#0073ea]/15 border border-[#0073ea]/30 flex items-center justify-center text-[#0073ea] mx-auto">
-              <Code2 className="w-6 h-6" />
+          <div className="text-center py-16 px-4 max-w-md mx-auto border border-zinc-800/60 rounded-lg p-8 space-y-3">
+            <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mx-auto rounded-md">
+              <Code2 className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="text-base font-bold text-white">Layanan Sedang Diperbarui</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Daftar paket layanan kami sedang dalam penyesuaian. Silakan hubungi kami langsung via WhatsApp untuk penawaran kustom.
-              </p>
-            </div>
+            <h3 className="text-sm font-semibold text-white">Layanan Sedang Diperbarui</h3>
+            <p className="text-xs text-zinc-400">
+              Silakan hubungi kami via WhatsApp untuk kebutuhan arsitektur kustom.
+            </p>
           </div>
         )}
 
-        {/* Dynamic Services Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        {/* Services Grid (Clean Modern Cards, Typography-First) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {data.services?.map((service) => {
             const Icon = iconMap[service.icon] || Code2;
             const waCustomMsg = `Halo ${data.name}, saya ingin konsultasi mengenai layanan ${service.title}.`;
@@ -58,40 +56,34 @@ export default function Services() {
             return (
               <div
                 key={service.id}
-                className="glass-panel p-7 sm:p-8 rounded-3xl glass-panel-hover flex flex-col justify-between relative overflow-hidden group shadow-sm"
+                className="p-8 rounded-xl border border-zinc-800/50 hover:border-zinc-700/80 bg-zinc-900/15 transition-all duration-200 flex flex-col justify-between group"
               >
-                {/* Top Subtle Gradient Light */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#0073ea]/10 rounded-full blur-2xl group-hover:bg-[#0073ea]/20 transition-all pointer-events-none" />
-
                 <div>
                   <div className="flex items-start justify-between mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-[#0073ea] group-hover:border-[#0073ea]/50 group-hover:bg-[#0073ea]/15 transition-colors shadow-xs">
-                      <Icon className="w-7 h-7" />
+                    <div className="w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-200 transition-colors">
+                      <Icon className="w-5 h-5" />
                     </div>
                     {service.badge && (
-                      <span className="text-[11px] font-mono font-medium px-3 py-1 rounded-full bg-[#0073ea]/15 text-[#0073ea] border border-[#0073ea]/30 shadow-xs">
+                      <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-zinc-900 text-zinc-300 border border-zinc-800">
                         {service.badge}
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-[#0073ea] transition-colors">
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 tracking-tight">
                     {service.title}
                   </h3>
 
-                  <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                  <p className="text-sm text-zinc-400 leading-relaxed mb-6">
                     {service.shortDesc}
                   </p>
 
                   {/* Features List */}
                   {service.features && service.features.length > 0 && (
-                    <div className="space-y-2.5 mb-6 pt-4 border-t border-slate-800">
-                      <div className="text-xs font-mono uppercase tracking-wider text-slate-400 font-medium">Fitur & Cakupan:</div>
-                      {service.features.map((feat, idx) => (
-                        <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300">
-                          <div className="w-4 h-4 rounded-full bg-[#0073ea]/20 text-[#0073ea] flex items-center justify-center mt-0.5 shrink-0">
-                            <Check className="w-3 h-3" />
-                          </div>
+                    <div className="space-y-2 mb-8 pt-4 border-t border-zinc-800/40">
+                      {service.features.map((feat, fIdx) => (
+                        <div key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300">
+                          <span className="text-zinc-500 font-bold select-none">•</span>
                           <span>{feat}</span>
                         </div>
                       ))}
@@ -99,13 +91,13 @@ export default function Services() {
                   )}
                 </div>
 
-                {/* Tech Badges & CTA */}
-                <div className="pt-5 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+                {/* Tech Badges (Monospace Allowed Here) & CTA */}
+                <div className="pt-6 border-t border-zinc-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
                   <div className="flex flex-wrap gap-1.5">
-                    {service.techStack?.map((tech, idx) => (
+                    {service.techStack?.map((tech, tIdx) => (
                       <span
-                        key={idx}
-                        className="text-[11px] font-mono px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700"
+                        key={tIdx}
+                        className="rounded-md border border-zinc-800 bg-zinc-900/50 px-2.5 py-0.5 text-[11px] font-mono text-zinc-400"
                       >
                         {tech}
                       </span>
@@ -116,10 +108,10 @@ export default function Services() {
                     href={waServiceLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0073ea] hover:text-sky-300 transition-colors shrink-0 group/link"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white transition-colors shrink-0 group/link"
                   >
-                    <span>Konsultasikan</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                    <span>Consult Scope</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
                   </a>
                 </div>
               </div>

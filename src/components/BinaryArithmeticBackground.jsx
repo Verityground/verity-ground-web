@@ -1,5 +1,89 @@
 import React, { useEffect, useRef } from 'react';
 
+// Comprehensive Syntax Snippets across 7 modern software engineering stacks
+const CODE_SNIPPET_CATEGORIES = {
+  reactFrontend: [
+    "const { data, isLoading } = useQuery(['projects'], fetchProjects);",
+    "<Suspense fallback={<SkeletonLoader />}>",
+    "const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);",
+    "export default function AsyncBoundary({ children }) { return <ErrorBoundary>{children}</ErrorBoundary>; }",
+    "const [state, dispatch] = useReducer(engineReducer, initialWorkspaceState);",
+    "const debouncedSearch = useDebounceCallback((q: string) => setSearchTerm(q), 300);",
+    "const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start end', 'end start'] });",
+    "const canvasRef = useRef<HTMLCanvasElement | null>(null);",
+    "const transition = useTransitionState({ timeout: 450 });",
+    "<AnimatePresence mode='wait'>{children}</AnimatePresence>"
+  ],
+  typescriptInterfaces: [
+    "type EngineConfig<T> = { id: string; payload: T; active: boolean; };",
+    "interface SystemArchitecture extends BaseCluster { nodes: ClusterNode[]; }",
+    "export type Nullable<T> = T | null | undefined;",
+    "type DeepReadonly<T> = { readonly [P in keyof T]: DeepReadonly<T[P]> };",
+    "type AsyncResult<T, E = Error> = { ok: true; data: T } | { ok: false; error: E };",
+    "export interface MetricsPayload { latencyMs: number; p99: number; throughput: number; }",
+    "type InferPayload<T> = T extends Action<infer P> ? P : never;",
+    "interface VectorEmbedding { vector: Float32Array; dimensions: 1536; }"
+  ],
+  nodeBackend: [
+    "app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 }));",
+    "const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });",
+    "async function executePipeline(queue: Task[]): Promise<Result>",
+    "const redis = new Redis({ host: process.env.REDIS_HOST, port: 6379, lazyConnect: true });",
+    "fastify.register(cors, { origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] });",
+    "const hash = crypto.createHmac('sha256', secret).update(payload).digest('hex');",
+    "await prisma.workspace.findUnique({ where: { slug }, include: { deployments: true } });",
+    "eventEmitter.emit('cluster:node_spawned', { nodeId, timestamp: Date.now() });"
+  ],
+  pythonDataAI: [
+    '@app.post("/api/v1/predict") async def generate_embedding(payload: VectorInput):',
+    "df['normalized_score'] = df['metric'].apply(lambda x: np.log1p(x))",
+    'transformer = AutoModelForCausalLM.from_pretrained("verity/core-v1")',
+    "embeddings = torch.nn.functional.normalize(model.encode(texts), p=2, dim=1)",
+    "pipeline = Pipeline([('scaler', StandardScaler()), ('classifier', GradientBoosting())])",
+    "async with aiohttp.ClientSession() as session: async with session.post(infer_url, json=data) as resp:",
+    "dataset = load_dataset('json', data_files='train_telemetry.jsonl')",
+    "optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5, weight_decay=0.01)"
+  ],
+  databaseQueries: [
+    "SELECT p.id, p.title, c.name FROM projects p JOIN categories c ON p.cat_id = c.id WHERE p.status = 'active';",
+    "db.collection('analytics').doc(id).set({ timestamp: FieldValue.serverTimestamp() }, { merge: true });",
+    "CREATE INDEX CONCURRENTLY idx_projects_slug_status ON projects (slug, status) WHERE is_deleted = false;",
+    "await prisma.deployment.findMany({ where: { status: 'HEALTHY' }, orderBy: { deployedAt: 'desc' } });",
+    "EXPLAIN ANALYZE SELECT * FROM telemetry_events WHERE timestamp > NOW() - INTERVAL '24 hours';",
+    "INSERT INTO cluster_logs (cluster_id, level, payload) VALUES ($1, $2, $3) RETURNING id;"
+  ],
+  devopsCloud: [
+    "FROM node:20-alpine AS builder WORKDIR /app RUN npm ci --omit=dev",
+    "version: '3.8' services: web: build: . ports: - \"3000:3000\"",
+    "kubectl apply -f ./k8s/deployment.yaml --namespace=production",
+    "docker run -d --restart=unless-stopped -p 8080:8080 --name core-api-gateway",
+    "terraform init && terraform apply -auto-approve -var-file=prod.tfvars",
+    "ingress: hosts: - host: verity-ground.internal paths: - path: / http: paths: [{ backend: { service: { name: web-svc } } }]",
+    "ARG NODE_ENV=production ENV NODE_ENV=${NODE_ENV}"
+  ],
+  cssTailwindAnimation: [
+    "@keyframes streamDrift { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }",
+    "grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));",
+    "backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);",
+    "transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);",
+    "box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 40px -15px rgba(0, 0, 0, 0.8);",
+    "@media (prefers-reduced-motion: reduce) { animation: none; }"
+  ]
+};
+
+// Flatten all snippets into master array
+const ALL_SNIPPETS = Object.values(CODE_SNIPPET_CATEGORIES).flat();
+
+// Shuffle utility (Fisher-Yates)
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 export default function BinaryArithmeticBackground() {
   const canvasRef = useRef(null);
 
@@ -7,7 +91,7 @@ export default function BinaryArithmeticBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     let animationFrameId;
@@ -15,36 +99,36 @@ export default function BinaryArithmeticBackground() {
     let width = 0;
     let height = 0;
 
-    // Rich character pools: Binary byte digits, boolean logic, and arithmetic operators
-    const binaryDigits = ['0', '1'];
-    const arithmeticSymbols = [
-      '+', '-', '×', '÷', '=', '≠', '≈', '∑', '√', 'π', 'Δ', '∫',
-      '%', '^', '&', '|', '⊕', '<<', '>>', '≡', '≤', '≥', '∞'
-    ];
-    const byteHexFormulas = [
-      '01', '10', '11', '00', '0x1F', '0xFF', '0b101', 'b[8]',
-      'if(byte)', '2ⁿ', '1010', '0101', '1100', '0011', '1111', 'else', 'return'
-    ];
+    // Track cursor for subtle ambient interactive glow
+    let mouse = { x: -1000, y: -1000 };
 
-    const getRandChar = () => {
-      const rand = Math.random();
-      if (rand < 0.72) {
-        // 72% chance of 0 or 1
-        return binaryDigits[Math.floor(Math.random() * binaryDigits.length)];
-      } else if (rand < 0.88) {
-        // 16% chance of arithmetic symbols
-        return arithmeticSymbols[Math.floor(Math.random() * arithmeticSymbols.length)];
-      } else {
-        // 12% chance of byte/hex chunks
-        return byteHexFormulas[Math.floor(Math.random() * byteHexFormulas.length)];
-      }
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
     };
 
-    const fontSize = 13;
-    let drops = [];
-    let floatingFormulas = [];
+    const handleMouseLeave = () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    };
 
-    const initCanvasSize = () => {
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+
+    // Track scroll for parallax drift across the full page (from Hero to Contact)
+    let scrollY = window.scrollY || window.pageYOffset || 0;
+    let targetScrollY = scrollY;
+
+    const handleScroll = () => {
+      targetScrollY = window.scrollY || window.pageYOffset || 0;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    let columns = [];
+
+    const initColumns = () => {
       width = window.innerWidth;
       height = window.innerHeight;
       dpr = window.devicePixelRatio || 1;
@@ -53,144 +137,103 @@ export default function BinaryArithmeticBackground() {
       canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const colSpacing = fontSize * 1.6;
-      const totalCols = Math.ceil(width / colSpacing);
-      drops = [];
+      // Adaptive column count and spacing across screen widths
+      const colWidth = width > 1600 ? 380 : width > 1200 ? 350 : width > 768 ? 320 : 280;
+      const numCols = Math.max(2, Math.ceil(width / colWidth) + 1);
 
-      for (let i = 0; i < totalCols; i++) {
-        // Layering depth (background slow, foreground faster)
-        const depth = Math.random();
-        const speed = depth < 0.5 ? 0.7 + Math.random() * 0.9 : 1.5 + Math.random() * 2.2;
-        const length = Math.floor(8 + Math.random() * 20);
+      columns = [];
 
-        drops.push({
-          x: i * colSpacing + (Math.random() * 4 - 2),
-          y: Math.random() * -150 - Math.random() * height,
-          speed,
-          length,
-          chars: Array.from({ length: 30 }, () => getRandChar()),
-          depth, // 0 to 1
-          opacity: 0.15 + Math.random() * 0.5,
-          colorTheme: Math.random() > 0.4 ? 'brandBlue' : 'electricCyan',
-          mutationFreq: 0.02 + Math.random() * 0.04
+      for (let c = 0; c < numCols; c++) {
+        // Varying drift velocities for multi-speed parallax
+        // Direction alternates: upwards and downwards
+        const baseSpeed = 0.22 + (c % 4) * 0.08 + Math.random() * 0.05;
+        const direction = c % 2 === 0 ? -1 : 1;
+        const scrollFactor = 0.08 + (c % 3) * 0.04;
+
+        // Dedicated randomized snippet pool for this column
+        const pool = shuffleArray(ALL_SNIPPETS);
+        const itemSpacing = 68; // Vertical distance between snippets
+        const totalItemsInCol = Math.ceil((height + 300) / itemSpacing) + 3;
+
+        const items = [];
+        for (let i = 0; i < totalItemsInCol; i++) {
+          const snippetText = pool[i % pool.length];
+          items.push({
+            text: snippetText,
+            y: (i * itemSpacing) - 80,
+            baseAlpha: 0.05 + Math.random() * 0.035, // Soft faint opacity: 0.05 - 0.085
+            snippetIndex: i % pool.length
+          });
+        }
+
+        columns.push({
+          x: c * colWidth + 18,
+          speed: baseSpeed * direction,
+          scrollFactor,
+          items,
+          itemSpacing,
+          pool,
+          colWidth
         });
       }
-
-      // Mathematical & binary floating equations across the canvas
-      floatingFormulas = [
-        { text: '01001000 + 01101001 = CODE', x: width * 0.12, y: height * 0.22, vx: 0.15, vy: -0.06, baseAlpha: 0.22 },
-        { text: '∑ (2ⁿ × bₙ) → 1011001₂', x: width * 0.68, y: height * 0.32, vx: -0.1, vy: 0.08, baseAlpha: 0.2 },
-        { text: 'f(bit) = (x ⊕ y) ∧ 0xFF', x: width * 0.18, y: height * 0.78, vx: 0.09, vy: 0.05, baseAlpha: 0.25 },
-        { text: '1010₂ + 0101₂ = 1111₂ (15₁₀)', x: width * 0.62, y: height * 0.82, vx: -0.08, vy: -0.1, baseAlpha: 0.26 },
-        { text: 'BYTE[0..7] = {0,1,1,0,1,0,0,1}', x: width * 0.48, y: height * 0.14, vx: -0.05, vy: 0.05, baseAlpha: 0.18 },
-        { text: 'lim_{n→∞} (1 + 1/n)ⁿ = e', x: width * 0.82, y: height * 0.6, vx: 0.06, vy: 0.08, baseAlpha: 0.18 },
-        { text: '0b11110000 >> 4 = 0b00001111', x: width * 0.08, y: height * 0.52, vx: 0.07, vy: -0.04, baseAlpha: 0.2 }
-      ];
     };
 
-    initCanvasSize();
+    initColumns();
 
     const handleResize = () => {
-      initCanvasSize();
+      initColumns();
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
 
-    // Track mouse for interactive glow ripple
-    let mouse = { x: -1000, y: -1000 };
-    const handleMouseMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-    };
-    const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
-
+    // Smooth render loop (60fps)
     const render = () => {
-      // Clear with trail fade on dark #19222c
-      ctx.fillStyle = 'rgba(25, 34, 44, 0.28)';
-      ctx.fillRect(0, 0, width, height);
+      // Smooth scroll interpolation
+      scrollY += (targetScrollY - scrollY) * 0.1;
 
-      ctx.font = `bold ${fontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`;
-      ctx.textAlign = 'center';
+      ctx.clearRect(0, 0, width, height);
 
-      // 1. Draw Binary and Arithmetic Columns
-      for (let i = 0; i < drops.length; i++) {
-        const drop = drops[i];
+      // Clean developer monospace font
+      ctx.font = '500 11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
+      ctx.textBaseline = 'middle';
 
-        // Mutate random characters periodically
-        if (Math.random() < drop.mutationFreq) {
-          const randIdx = Math.floor(Math.random() * drop.chars.length);
-          drop.chars[randIdx] = getRandChar();
-        }
+      for (let c = 0; c < columns.length; c++) {
+        const col = columns[c];
 
-        // Distance from mouse for interactive brightening
-        const distToMouse = Math.hypot(drop.x - mouse.x, drop.y - mouse.y);
-        const isNearMouse = distToMouse < 180;
-        const mouseBoost = isNearMouse ? (1 - distToMouse / 180) * 0.35 : 0;
+        for (let i = 0; i < col.items.length; i++) {
+          const item = col.items[i];
 
-        for (let j = 0; j < drop.length; j++) {
-          const charY = drop.y - j * (fontSize * 1.35);
-          if (charY < -10 || charY > height + 20) continue;
+          // Advance continuous drift
+          item.y += col.speed;
 
-          const isHead = j === 0;
-          const isSecond = j === 1;
+          // Parallax effect from page scrolling (flowing from Hero down to Contact)
+          const effectiveY = item.y - (scrollY * col.scrollFactor) % (height + 200);
 
-          if (isHead) {
-            // Bright white leading character with #0073ea electric glow
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = '#0073ea';
-            ctx.shadowBlur = 10;
-          } else if (isSecond) {
-            ctx.fillStyle = '#38bdf8';
-            ctx.shadowColor = '#0073ea';
-            ctx.shadowBlur = 6;
-          } else {
-            // Fading trail in brand #0073ea and electric sky
-            const trailRatio = 1 - j / drop.length;
-            const alpha = (drop.opacity + mouseBoost) * trailRatio;
-            ctx.fillStyle = drop.colorTheme === 'brandBlue'
-              ? `rgba(0, 115, 234, ${Math.min(alpha * 0.9, 0.85)})`
-              : `rgba(56, 189, 248, ${Math.min(alpha * 0.75, 0.7)})`;
-            ctx.shadowBlur = 0;
+          // Wrap boundaries and assign a newly randomized snippet upon wrap
+          if (col.speed > 0 && effectiveY > height + 80) {
+            item.y = -100 + (scrollY * col.scrollFactor) % (height + 200);
+            item.snippetIndex = (item.snippetIndex + col.items.length + Math.floor(Math.random() * 7) + 1) % col.pool.length;
+            item.text = col.pool[item.snippetIndex];
+          } else if (col.speed < 0 && effectiveY < -120) {
+            item.y = height + 60 + (scrollY * col.scrollFactor) % (height + 200);
+            item.snippetIndex = (item.snippetIndex + col.items.length + Math.floor(Math.random() * 7) + 1) % col.pool.length;
+            item.text = col.pool[item.snippetIndex];
           }
 
-          const char = drop.chars[j % drop.chars.length];
-          ctx.fillText(char, drop.x, charY);
-        }
+          // Subtle interaction with mouse spotlight
+          const dx = col.x - mouse.x;
+          const dy = effectiveY - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          const mouseGlow = dist < 220 ? (1 - dist / 220) * 0.09 : 0;
 
-        // Move drop downwards
-        drop.y += drop.speed + (isNearMouse ? 0.8 : 0);
+          // Compute final alpha (faint & soft, non-distracting)
+          const finalAlpha = Math.min(item.baseAlpha + mouseGlow, 0.14);
 
-        // Reset drop when exceeding screen height
-        if (drop.y - drop.length * (fontSize * 1.35) > height) {
-          drop.y = Math.random() * -60;
-          drop.speed = drop.depth < 0.5 ? 0.7 + Math.random() * 0.9 : 1.5 + Math.random() * 2.2;
+          // Render code snippet line
+          ctx.fillStyle = `rgba(255, 255, 255, ${finalAlpha})`;
+          ctx.fillText(item.text, col.x, effectiveY);
         }
       }
-
-      // 2. Draw Floating Arithmetic Formulas
-      ctx.shadowBlur = 0;
-      ctx.font = `600 12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`;
-
-      floatingFormulas.forEach((formula) => {
-        formula.x += formula.vx;
-        formula.y += formula.vy;
-
-        // Wrap edges
-        if (formula.x < -150) formula.x = width + 80;
-        if (formula.x > width + 150) formula.x = -80;
-        if (formula.y < -40) formula.y = height + 30;
-        if (formula.y > height + 40) formula.y = -30;
-
-        ctx.fillStyle = `rgba(0, 115, 234, ${formula.baseAlpha * 1.8})`;
-        ctx.fillText(formula.text, formula.x, formula.y);
-      });
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -200,19 +243,24 @@ export default function BinaryArithmeticBackground() {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none select-none overflow-hidden z-0">
+    <div
+      className="fixed inset-0 pointer-events-none select-none overflow-hidden z-0 bg-transparent"
+      style={{
+        maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 88%, rgba(0,0,0,0.3) 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 88%, rgba(0,0,0,0.3) 100%)'
+      }}
+    >
       <canvas
         ref={canvasRef}
-        className="w-full h-full block opacity-80"
+        className="w-full h-full block"
       />
-      {/* Soft radial glow mask for pleasant edge softening on #19222c */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,transparent_45%,rgba(25,34,44,0.75)_100%)] pointer-events-none" />
     </div>
   );
 }

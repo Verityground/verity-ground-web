@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X, Plus, Edit2, Trash2, Save, RefreshCw, Lock, LogOut, Check,
   Layers, Wrench, Settings, AlertTriangle, ExternalLink, Image, Code2,
@@ -49,6 +49,7 @@ export default function AdminPanel() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [notification, setNotification] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const showToast = (msg) => {
     setNotification(msg);
@@ -67,7 +68,7 @@ export default function AdminPanel() {
   };
 
   // ==========================================
-  // 1. PORTFOLIO STATE & HANDLERS
+  // 1. PORTFOLIO STATE
   // ==========================================
   const [isEditingProject, setIsEditingProject] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState(null);
@@ -83,6 +84,82 @@ export default function AdminPanel() {
     status: 'Live Production'
   });
 
+  // ==========================================
+  // 2. SERVICES STATE
+  // ==========================================
+  const [isEditingService, setIsEditingService] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState(null);
+  const [serviceForm, setServiceForm] = useState({
+    title: '',
+    shortDesc: '',
+    icon: 'Code2',
+    badge: 'Paling Populer',
+    features: '',
+    techStack: ''
+  });
+
+  // ==========================================
+  // 3. ABOUT & VALUES & WORKFLOW STATE
+  // ==========================================
+  const [aboutStoryForm, setAboutStoryForm] = useState(data?.about?.story || '');
+  const [aboutVisionForm, setAboutVisionForm] = useState(data?.about?.vision || '');
+  const [isEditingValue, setIsEditingValue] = useState(false);
+  const [editingValueId, setEditingValueId] = useState(null);
+  const [valueForm, setValueForm] = useState({ title: '', desc: '', icon: 'CheckCircle2' });
+  const [isEditingStep, setIsEditingStep] = useState(false);
+  const [editingStepId, setEditingStepId] = useState(null);
+  const [stepForm, setStepForm] = useState({ step: '01', title: '', desc: '' });
+
+  // ==========================================
+  // 4. FAQ STATE
+  // ==========================================
+  const [isEditingFaq, setIsEditingFaq] = useState(false);
+  const [editingFaqId, setEditingFaqId] = useState(null);
+  const [faqForm, setFaqForm] = useState({ q: '', a: '' });
+
+  // ==========================================
+  // 5. HERO, STATS & GENERAL SETTINGS STATE
+  // ==========================================
+  const [settingsForm, setSettingsForm] = useState({
+    name: data?.name || '',
+    tagline: data?.tagline || '',
+    heroHeadline1: data?.heroHeadline1 || 'Butuh Website?',
+    heroHeadlineHighlight1: data?.heroHeadlineHighlight1 || 'Butuh Aplikasi?',
+    heroHeadlineHighlight2: data?.heroHeadlineHighlight2 || 'Gass Bareng Kitaa Ajaa!',
+    subHeadline: data?.subHeadline || '',
+    trustHighlights: Array.isArray(data?.trustHighlights) ? data.trustHighlights.join('\n') : '',
+    whatsappNumber: data?.whatsappNumber || '',
+    whatsappMessage: data?.whatsappMessage || '',
+    email: data?.email || '',
+    location: data?.location || '',
+    availability: data?.availability || ''
+  });
+  const [statsForm, setStatsForm] = useState(data?.stats || []);
+
+  // Sync form states whenever data changes or when Admin Panel opens
+  useEffect(() => {
+    if (data) {
+      setSettingsForm({
+        name: data.name || '',
+        tagline: data.tagline || '',
+        heroHeadline1: data.heroHeadline1 || 'Butuh Website?',
+        heroHeadlineHighlight1: data.heroHeadlineHighlight1 || 'Butuh Aplikasi?',
+        heroHeadlineHighlight2: data.heroHeadlineHighlight2 || 'Gass Bareng Kitaa Ajaa!',
+        subHeadline: data.subHeadline || '',
+        trustHighlights: Array.isArray(data.trustHighlights) ? data.trustHighlights.join('\n') : '',
+        whatsappNumber: data.whatsappNumber || '',
+        whatsappMessage: data.whatsappMessage || '',
+        email: data.email || '',
+        location: data.location || '',
+        availability: data.availability || ''
+      });
+      setStatsForm(data.stats || []);
+      setAboutStoryForm(data.about?.story || '');
+      setAboutVisionForm(data.about?.vision || '');
+    }
+  }, [data, isAdminOpen]);
+
+  // Handlers for Portfolio
   const handleOpenNewProject = () => {
     setIsEditingProject(true);
     setEditingProjectId(null);
@@ -115,55 +192,61 @@ export default function AdminPanel() {
     });
   };
 
-  const handleSaveProject = (e) => {
+  const handleSaveProject = async (e) => {
     e.preventDefault();
-    const techArray = projectForm.tech
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
+    setIsSaving(true);
+    try {
+      const techArray = projectForm.tech
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean);
 
-    const payload = {
-      title: projectForm.title,
-      category: projectForm.category,
-      image: projectForm.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
-      shortDesc: projectForm.shortDesc,
-      tech: techArray,
-      demoUrl: projectForm.demoUrl || '#',
-      client: projectForm.client || 'Client Partner',
-      metrics: projectForm.metrics || '',
-      status: projectForm.status || 'Live Production'
-    };
+      const payload = {
+        title: projectForm.title,
+        category: projectForm.category,
+        image: projectForm.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
+        shortDesc: projectForm.shortDesc,
+        tech: techArray,
+        demoUrl: projectForm.demoUrl || '#',
+        client: projectForm.client || 'Client Partner',
+        metrics: projectForm.metrics || '',
+        status: projectForm.status || 'Live Production'
+      };
 
-    if (editingProjectId) {
-      updatePortfolio(editingProjectId, payload);
-      showToast('Portofolio berhasil diperbarui!');
-    } else {
-      addPortfolio(payload);
-      showToast('Portofolio baru berhasil ditambahkan!');
+      if (editingProjectId) {
+        await updatePortfolio(editingProjectId, payload);
+        showToast('Portofolio berhasil diperbarui di Firebase!');
+      } else {
+        await addPortfolio(payload);
+        showToast('Portofolio baru berhasil ditambahkan ke Firebase!');
+      }
+      setIsEditingProject(false);
+    } catch (err) {
+      console.error('Error saving project to Firebase:', err);
+      showToast('Gagal menyimpan ke Firebase: ' + (err.message || 'Error'));
+    } finally {
+      setIsSaving(false);
     }
-    setIsEditingProject(false);
   };
 
-  const handleDeleteProject = (id, title) => {
+  const handleDeleteProject = async (id, title) => {
     if (window.confirm(`Yakin ingin menghapus portofolio "${title}"?`)) {
-      deletePortfolio(id);
-      showToast('Portofolio telah dihapus.');
+      setIsSaving(true);
+      try {
+        await deletePortfolio(id);
+        showToast('Portofolio telah dihapus dari Firebase.');
+      } catch (err) {
+        console.error('Error deleting project:', err);
+        showToast('Gagal menghapus: ' + (err.message || 'Error'));
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
   // ==========================================
-  // 2. SERVICES STATE & HANDLERS
+  // 2. SERVICES HANDLERS
   // ==========================================
-  const [isEditingService, setIsEditingService] = useState(false);
-  const [editingServiceId, setEditingServiceId] = useState(null);
-  const [serviceForm, setServiceForm] = useState({
-    title: '',
-    shortDesc: '',
-    icon: 'Code2',
-    badge: 'Paling Populer',
-    features: '',
-    techStack: ''
-  });
 
   const handleOpenNewService = () => {
     setIsEditingService(true);
@@ -191,96 +274,151 @@ export default function AdminPanel() {
     });
   };
 
-  const handleSaveService = (e) => {
+  const handleSaveService = async (e) => {
     e.preventDefault();
-    const featuresArray = serviceForm.features
-      .split('\n')
-      .map((f) => f.trim())
-      .filter(Boolean);
+    setIsSaving(true);
+    try {
+      const featuresArray = serviceForm.features
+        .split('\n')
+        .map((f) => f.trim())
+        .filter(Boolean);
 
-    const techArray = serviceForm.techStack
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
+      const techArray = serviceForm.techStack
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean);
 
-    const payload = {
-      title: serviceForm.title,
-      shortDesc: serviceForm.shortDesc,
-      icon: serviceForm.icon || 'Code2',
-      badge: serviceForm.badge,
-      features: featuresArray,
-      techStack: techArray
-    };
+      const payload = {
+        title: serviceForm.title,
+        shortDesc: serviceForm.shortDesc,
+        icon: serviceForm.icon || 'Code2',
+        badge: serviceForm.badge,
+        features: featuresArray,
+        techStack: techArray
+      };
 
-    if (editingServiceId) {
-      updateService(editingServiceId, payload);
-      showToast('Layanan berhasil diperbarui!');
-    } else {
-      addService(payload);
-      showToast('Layanan baru berhasil ditambahkan!');
+      if (editingServiceId) {
+        await updateService(editingServiceId, payload);
+        showToast('Layanan berhasil diperbarui di Firebase!');
+      } else {
+        await addService(payload);
+        showToast('Layanan baru berhasil ditambahkan ke Firebase!');
+      }
+      setIsEditingService(false);
+    } catch (err) {
+      console.error('Error saving service:', err);
+      showToast('Gagal menyimpan layanan: ' + (err.message || 'Error'));
+    } finally {
+      setIsSaving(false);
     }
-    setIsEditingService(false);
   };
 
-  const handleDeleteService = (id, title) => {
+  const handleDeleteService = async (id, title) => {
     if (window.confirm(`Yakin ingin menghapus layanan "${title}"?`)) {
-      deleteService(id);
-      showToast('Layanan telah dihapus.');
+      setIsSaving(true);
+      try {
+        await deleteService(id);
+        showToast('Layanan telah dihapus dari Firebase.');
+      } catch (err) {
+        console.error('Error deleting service:', err);
+        showToast('Gagal menghapus layanan: ' + (err.message || 'Error'));
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
   // ==========================================
-  // 3. ABOUT & VALUES & WORKFLOW STATE
+  // 3. ABOUT & VALUES & WORKFLOW HANDLERS
   // ==========================================
-  const [aboutStoryForm, setAboutStoryForm] = useState(data.about?.story || '');
-  const [aboutVisionForm, setAboutVisionForm] = useState(data.about?.vision || '');
-  
-  // Value Pillar Form State
-  const [isEditingValue, setIsEditingValue] = useState(false);
-  const [editingValueId, setEditingValueId] = useState(null);
-  const [valueForm, setValueForm] = useState({ title: '', desc: '', icon: 'CheckCircle2' });
 
-  // Workflow Step Form State
-  const [isEditingStep, setIsEditingStep] = useState(false);
-  const [editingStepId, setEditingStepId] = useState(null);
-  const [stepForm, setStepForm] = useState({ step: '01', title: '', desc: '' });
-
-  const handleSaveAboutStory = (e) => {
+  const handleSaveAboutStory = async (e) => {
     e.preventDefault();
-    updateAboutStory(aboutStoryForm, aboutVisionForm);
-    showToast('Narasi Tentang Kami berhasil diperbarui!');
-  };
-
-  const handleSaveValuePillar = (e) => {
-    e.preventDefault();
-    if (editingValueId) {
-      updateValuePillar(editingValueId, valueForm);
-      showToast('Pilar nilai berhasil diperbarui!');
-    } else {
-      addValuePillar(valueForm);
-      showToast('Pilar nilai baru berhasil ditambahkan!');
+    setIsSaving(true);
+    try {
+      await updateAboutStory(aboutStoryForm, aboutVisionForm);
+      showToast('Narasi Tentang Kami berhasil disimpan ke Firebase!');
+    } catch (err) {
+      console.error('Error saving about story:', err);
+      showToast('Gagal menyimpan narasi: ' + (err.message || 'Error'));
+    } finally {
+      setIsSaving(false);
     }
-    setIsEditingValue(false);
   };
 
-  const handleSaveWorkflowStep = (e) => {
+  const handleSaveValuePillar = async (e) => {
     e.preventDefault();
-    if (editingStepId) {
-      updateWorkflowStep(editingStepId, stepForm);
-      showToast('Tahapan alur berhasil diperbarui!');
-    } else {
-      addWorkflowStep(stepForm);
-      showToast('Tahapan alur baru berhasil ditambahkan!');
+    setIsSaving(true);
+    try {
+      if (editingValueId) {
+        await updateValuePillar(editingValueId, valueForm);
+        showToast('Pilar nilai berhasil diperbarui di Firebase!');
+      } else {
+        await addValuePillar(valueForm);
+        showToast('Pilar nilai baru berhasil ditambahkan ke Firebase!');
+      }
+      setIsEditingValue(false);
+    } catch (err) {
+      console.error('Error saving value pillar:', err);
+      showToast('Gagal menyimpan pilar: ' + (err.message || 'Error'));
+    } finally {
+      setIsSaving(false);
     }
-    setIsEditingStep(false);
+  };
+
+  const handleDeleteValuePillar = async (id) => {
+    if (window.confirm('Yakin ingin menghapus pilar nilai ini?')) {
+      setIsSaving(true);
+      try {
+        await deleteValuePillar(id);
+        showToast('Pilar nilai dihapus dari Firebase.');
+      } catch (err) {
+        console.error('Error deleting value pillar:', err);
+        showToast('Gagal menghapus pilar: ' + (err.message || 'Error'));
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  const handleSaveWorkflowStep = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      if (editingStepId) {
+        await updateWorkflowStep(editingStepId, stepForm);
+        showToast('Tahapan alur berhasil diperbarui di Firebase!');
+      } else {
+        await addWorkflowStep(stepForm);
+        showToast('Tahapan alur baru berhasil ditambahkan ke Firebase!');
+      }
+      setIsEditingStep(false);
+    } catch (err) {
+      console.error('Error saving workflow step:', err);
+      showToast('Gagal menyimpan alur: ' + (err.message || 'Error'));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteWorkflowStep = async (id) => {
+    if (window.confirm('Yakin ingin menghapus tahapan alur kerja ini?')) {
+      setIsSaving(true);
+      try {
+        await deleteWorkflowStep(id);
+        showToast('Tahapan alur dihapus dari Firebase.');
+      } catch (err) {
+        console.error('Error deleting workflow step:', err);
+        showToast('Gagal menghapus alur: ' + (err.message || 'Error'));
+      } finally {
+        setIsSaving(false);
+      }
+    }
   };
 
   // ==========================================
-  // 4. FAQ STATE & HANDLERS
+  // 4. FAQ HANDLERS
   // ==========================================
-  const [isEditingFaq, setIsEditingFaq] = useState(false);
-  const [editingFaqId, setEditingFaqId] = useState(null);
-  const [faqForm, setFaqForm] = useState({ q: '', a: '' });
 
   const handleOpenNewFaq = () => {
     setIsEditingFaq(true);
@@ -294,44 +432,44 @@ export default function AdminPanel() {
     setFaqForm({ q: f.q, a: f.a });
   };
 
-  const handleSaveFaq = (e) => {
+  const handleSaveFaq = async (e) => {
     e.preventDefault();
-    if (editingFaqId) {
-      updateFaq(editingFaqId, faqForm);
-      showToast('FAQ berhasil diperbarui!');
-    } else {
-      addFaq(faqForm);
-      showToast('FAQ baru berhasil ditambahkan!');
+    setIsSaving(true);
+    try {
+      if (editingFaqId) {
+        await updateFaq(editingFaqId, faqForm);
+        showToast('FAQ berhasil diperbarui di Firebase!');
+      } else {
+        await addFaq(faqForm);
+        showToast('FAQ baru berhasil ditambahkan ke Firebase!');
+      }
+      setIsEditingFaq(false);
+    } catch (err) {
+      console.error('Error saving faq:', err);
+      showToast('Gagal menyimpan FAQ: ' + (err.message || 'Error'));
+    } finally {
+      setIsSaving(false);
     }
-    setIsEditingFaq(false);
   };
 
-  const handleDeleteFaq = (id, q) => {
+  const handleDeleteFaq = async (id, q) => {
     if (window.confirm(`Hapus pertanyaan: "${q}"?`)) {
-      deleteFaq(id);
-      showToast('FAQ telah dihapus.');
+      setIsSaving(true);
+      try {
+        await deleteFaq(id);
+        showToast('FAQ telah dihapus dari Firebase.');
+      } catch (err) {
+        console.error('Error deleting FAQ:', err);
+        showToast('Gagal menghapus FAQ: ' + (err.message || 'Error'));
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
   // ==========================================
   // 5. HERO, STATS & CONTACT SETTINGS
   // ==========================================
-  const [settingsForm, setSettingsForm] = useState({
-    name: data.name || '',
-    tagline: data.tagline || '',
-    heroHeadline1: data.heroHeadline1 || 'Butuh Website?',
-    heroHeadlineHighlight1: data.heroHeadlineHighlight1 || 'Butuh Aplikasi?',
-    heroHeadlineHighlight2: data.heroHeadlineHighlight2 || 'Gass Bareng Kitaa Ajaa!',
-    subHeadline: data.subHeadline || '',
-    trustHighlights: Array.isArray(data.trustHighlights) ? data.trustHighlights.join('\n') : '',
-    whatsappNumber: data.whatsappNumber || '',
-    whatsappMessage: data.whatsappMessage || '',
-    email: data.email || '',
-    location: data.location || '',
-    availability: data.availability || ''
-  });
-
-  const [statsForm, setStatsForm] = useState(data.stats || []);
 
   const handleStatChange = (index, field, value) => {
     const updated = [...statsForm];
@@ -339,35 +477,51 @@ export default function AdminPanel() {
     setStatsForm(updated);
   };
 
-  const handleSaveSettings = (e) => {
+  const handleSaveSettings = async (e) => {
     e.preventDefault();
-    const trustArray = settingsForm.trustHighlights
-      .split('\n')
-      .map((t) => t.trim())
-      .filter(Boolean);
+    setIsSaving(true);
+    try {
+      const trustArray = settingsForm.trustHighlights
+        .split('\n')
+        .map((t) => t.trim())
+        .filter(Boolean);
 
-    updateGeneralSettings({
-      name: settingsForm.name,
-      tagline: settingsForm.tagline,
-      heroHeadline1: settingsForm.heroHeadline1,
-      heroHeadlineHighlight1: settingsForm.heroHeadlineHighlight1,
-      heroHeadlineHighlight2: settingsForm.heroHeadlineHighlight2,
-      subHeadline: settingsForm.subHeadline,
-      trustHighlights: trustArray,
-      whatsappNumber: settingsForm.whatsappNumber,
-      whatsappMessage: settingsForm.whatsappMessage,
-      email: settingsForm.email,
-      location: settingsForm.location,
-      availability: settingsForm.availability
-    });
-    updateStats(statsForm);
-    showToast('Pengaturan studio & stats berhasil disimpan!');
+      await updateGeneralSettings({
+        name: settingsForm.name,
+        tagline: settingsForm.tagline,
+        heroHeadline1: settingsForm.heroHeadline1,
+        heroHeadlineHighlight1: settingsForm.heroHeadlineHighlight1,
+        heroHeadlineHighlight2: settingsForm.heroHeadlineHighlight2,
+        subHeadline: settingsForm.subHeadline,
+        trustHighlights: trustArray,
+        whatsappNumber: settingsForm.whatsappNumber,
+        whatsappMessage: settingsForm.whatsappMessage,
+        email: settingsForm.email,
+        location: settingsForm.location,
+        availability: settingsForm.availability,
+        stats: statsForm
+      });
+      showToast('Pengaturan studio & stats berhasil disimpan ke Firebase!');
+    } catch (err) {
+      console.error('Error saving settings:', err);
+      showToast('Gagal menyimpan ke Firebase: ' + (err.message || 'Error'));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleResetData = () => {
+  const handleResetData = async () => {
     if (window.confirm('PERINGATAN: Semua perubahan custom akan di-reset kembali ke data awal kosong / bawaan. Lanjutkan?')) {
-      resetToDefault();
-      showToast('Data berhasil di-reset.');
+      setIsSaving(true);
+      try {
+        await resetToDefault();
+        showToast('Data berhasil di-reset ke bawaan di Firebase.');
+      } catch (err) {
+        console.error('Error resetting data:', err);
+        showToast('Gagal reset data: ' + (err.message || 'Error'));
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -378,25 +532,25 @@ export default function AdminPanel() {
       
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] bg-emerald-500 text-zinc-950 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl shadow-emerald-500/30">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] bg-emerald-500 text-zinc-950 px-5 py-2.5 rounded-none font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl shadow-emerald-500/30">
           <Check className="w-4 h-4" />
           <span>{notification}</span>
         </div>
       )}
 
       {/* Main Admin Box */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-3xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden relative">
+      <div className="bg-zinc-950 border border-zinc-800 rounded-none w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden relative">
         
         {/* Top Header */}
         <div className="px-5 sm:px-6 py-4 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <div className="w-9 h-9 rounded-none bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <Settings className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                 Verity Ground Admin Control
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                   Custom CMS
                 </span>
               </h2>
@@ -406,7 +560,7 @@ export default function AdminPanel() {
 
           <div className="flex items-center gap-2">
             {/* Live Firebase Cloud Sync Status */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] font-mono">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-zinc-950 border border-zinc-800 text-[11px] font-mono">
               {syncStatus === 'saving' && (
                 <span className="flex items-center gap-1.5 text-amber-400">
                   <RefreshCw className="w-3 h-3 animate-spin text-amber-400" />
@@ -415,7 +569,7 @@ export default function AdminPanel() {
               )}
               {syncStatus === 'synced' && (
                 <span className="flex items-center gap-1.5 text-emerald-400">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-none bg-emerald-400 animate-pulse" />
                   <span className="hidden sm:inline">Firebase Cloud Synced</span>
                 </span>
               )}
@@ -437,14 +591,14 @@ export default function AdminPanel() {
               )}
             </div>
 
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] font-mono text-zinc-400">
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-zinc-950 border border-zinc-800 text-[11px] font-mono text-zinc-400">
               <span className="text-zinc-500">Shortcut:</span>
-              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] font-semibold">Ctrl + '</kbd>
+              <kbd className="px-1.5 py-0.5 rounded-none bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] font-semibold">Ctrl + '</kbd>
             </div>
             {isAuthenticated && (
               <button
                 onClick={logoutAdmin}
-                className="p-2 rounded-xl text-zinc-400 hover:text-rose-400 hover:bg-zinc-800/80 transition-colors border border-zinc-800 text-xs flex items-center gap-1.5 cursor-pointer"
+                className="p-2 rounded-none text-zinc-400 hover:text-rose-400 hover:bg-zinc-800/80 transition-colors border border-zinc-800 text-xs flex items-center gap-1.5 cursor-pointer"
                 title="Logout Admin"
               >
                 <LogOut className="w-4 h-4" />
@@ -453,7 +607,7 @@ export default function AdminPanel() {
             )}
             <button
               onClick={() => setIsAdminOpen(false)}
-              className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors border border-zinc-800 cursor-pointer"
+              className="p-2 rounded-none text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors border border-zinc-800 cursor-pointer"
               title="Tutup (Esc)"
               aria-label="Close"
             >
@@ -466,8 +620,8 @@ export default function AdminPanel() {
         {!isAuthenticated ? (
           /* Login View */
           <div className="flex-1 flex items-center justify-center p-6">
-            <div className="w-full max-w-md bg-zinc-900/80 border border-zinc-800 p-8 rounded-2xl space-y-6 text-center shadow-xl">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto">
+            <div className="w-full max-w-md bg-zinc-900/80 border border-zinc-800 p-8 rounded-none space-y-6 text-center shadow-xl">
+              <div className="w-14 h-14 rounded-none bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto">
                 <Lock className="w-7 h-7" />
               </div>
               <div>
@@ -490,12 +644,12 @@ export default function AdminPanel() {
                       placeholder="••••••••••••"
                       value={passwordInput}
                       onChange={(e) => setPasswordInput(e.target.value)}
-                      className="w-full pl-4 pr-11 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-700 text-sm focus:outline-none focus:border-emerald-500 transition-colors font-sans"
+                      className="w-full pl-4 pr-11 py-3 rounded-none bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-700 text-sm focus:outline-none focus:border-emerald-500 transition-colors font-sans"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer rounded-lg hover:bg-zinc-800/60"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer rounded-none hover:bg-zinc-800/60"
                       title={showPassword ? 'Sembunyikan password' : 'Lihat password'}
                       tabIndex={-1}
                     >
@@ -515,7 +669,7 @@ export default function AdminPanel() {
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
+                  className="w-full py-3 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
                 >
                   Masuk Control Panel
                 </button>
@@ -531,7 +685,7 @@ export default function AdminPanel() {
               
               <button
                 onClick={() => { setActiveTab('portfolio'); setIsEditingProject(false); }}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-none text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
                   activeTab === 'portfolio'
                     ? 'bg-emerald-500 text-zinc-950 font-semibold shadow-md shadow-emerald-500/20'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
@@ -543,7 +697,7 @@ export default function AdminPanel() {
 
               <button
                 onClick={() => { setActiveTab('services'); setIsEditingService(false); }}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-none text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
                   activeTab === 'services'
                     ? 'bg-emerald-500 text-zinc-950 font-semibold shadow-md shadow-emerald-500/20'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
@@ -555,7 +709,7 @@ export default function AdminPanel() {
 
               <button
                 onClick={() => { setActiveTab('about'); setIsEditingValue(false); setIsEditingStep(false); }}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-none text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
                   activeTab === 'about'
                     ? 'bg-emerald-500 text-zinc-950 font-semibold shadow-md shadow-emerald-500/20'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
@@ -567,7 +721,7 @@ export default function AdminPanel() {
 
               <button
                 onClick={() => { setActiveTab('faqs'); setIsEditingFaq(false); }}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-none text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
                   activeTab === 'faqs'
                     ? 'bg-emerald-500 text-zinc-950 font-semibold shadow-md shadow-emerald-500/20'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
@@ -579,7 +733,7 @@ export default function AdminPanel() {
 
               <button
                 onClick={() => setActiveTab('settings')}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-none text-xs sm:text-sm font-medium transition-colors w-full text-left whitespace-nowrap cursor-pointer ${
                   activeTab === 'settings'
                     ? 'bg-emerald-500 text-zinc-950 font-semibold shadow-md shadow-emerald-500/20'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
@@ -592,7 +746,7 @@ export default function AdminPanel() {
               <div className="mt-auto hidden md:block pt-4 border-t border-zinc-800">
                 <button
                   onClick={handleResetData}
-                  className="w-full py-2.5 px-3 rounded-xl bg-zinc-900 hover:bg-rose-950/40 text-zinc-400 hover:text-rose-400 border border-zinc-800 hover:border-rose-500/30 text-xs font-mono transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 px-3 rounded-none bg-zinc-900 hover:bg-rose-950/40 text-zinc-400 hover:text-rose-400 border border-zinc-800 hover:border-rose-500/30 text-xs font-mono transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Reset Data</span>
@@ -616,7 +770,7 @@ export default function AdminPanel() {
                     {!isEditingProject && (
                       <button
                         onClick={handleOpenNewProject}
-                        className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
+                        className="px-4 py-2.5 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
                       >
                         <Plus className="w-4 h-4" />
                         <span>Tambah Portofolio</span>
@@ -626,7 +780,7 @@ export default function AdminPanel() {
 
                   {/* Portfolio Form (Add / Edit) */}
                   {isEditingProject ? (
-                    <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-2xl space-y-5">
+                    <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-none space-y-5">
                       <div className="flex items-center justify-between">
                         <h4 className="text-base font-bold text-emerald-400 flex items-center gap-2">
                           {editingProjectId ? '✏️ Edit Portofolio' : '✨ Tambah Portofolio Baru'}
@@ -649,7 +803,7 @@ export default function AdminPanel() {
                               placeholder="Contoh: FinPulse — Smart Invoicing & SaaS"
                               value={projectForm.title}
                               onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
 
@@ -661,7 +815,7 @@ export default function AdminPanel() {
                               placeholder="Web App / Landing Page / Sistem Kustom / Mobile"
                               value={projectForm.category}
                               onChange={(e) => setProjectForm({ ...projectForm, category: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
                         </div>
@@ -674,7 +828,7 @@ export default function AdminPanel() {
                               placeholder="Contoh: PT FinTek Nusantara"
                               value={projectForm.client}
                               onChange={(e) => setProjectForm({ ...projectForm, client: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
 
@@ -685,7 +839,7 @@ export default function AdminPanel() {
                               placeholder="Contoh: Peningkatan efisiensi +40% / 5.000+ Siswa Aktif"
                               value={projectForm.metrics}
                               onChange={(e) => setProjectForm({ ...projectForm, metrics: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
                         </div>
@@ -696,9 +850,9 @@ export default function AdminPanel() {
                             File Gambar Portofolio (.SVG, .PNG, .JPG, .WEBP) *
                           </label>
 
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl bg-zinc-950 border border-zinc-800">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-none bg-zinc-950 border border-zinc-800">
                             {/* Preview Thumbnail */}
-                            <div className="w-24 h-20 rounded-xl bg-zinc-900 border border-zinc-800 overflow-hidden flex items-center justify-center shrink-0 relative group">
+                            <div className="w-24 h-20 rounded-none bg-zinc-900 border border-zinc-800 overflow-hidden flex items-center justify-center shrink-0 relative group">
                               {projectForm.image ? (
                                 <img
                                   src={projectForm.image}
@@ -712,7 +866,7 @@ export default function AdminPanel() {
 
                             {/* File Upload Controls */}
                             <div className="flex-1 space-y-2 w-full">
-                              <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-semibold cursor-pointer transition-colors">
+                              <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-none bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-semibold cursor-pointer transition-colors">
                                 <Upload className="w-4 h-4" />
                                 <span>Pilih File Gambar (.svg, .png, .jpg)</span>
                                 <input
@@ -760,7 +914,7 @@ export default function AdminPanel() {
                             placeholder="Platform manajemen invoice otomatis, pembayaran digital, dan analitik kas..."
                             value={projectForm.shortDesc}
                             onChange={(e) => setProjectForm({ ...projectForm, shortDesc: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
                           />
                         </div>
 
@@ -772,7 +926,7 @@ export default function AdminPanel() {
                               placeholder="React, Tailwind CSS, Node.js, PostgreSQL"
                               value={projectForm.tech}
                               onChange={(e) => setProjectForm({ ...projectForm, tech: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
 
@@ -783,7 +937,7 @@ export default function AdminPanel() {
                               placeholder="Live Production / Beta"
                               value={projectForm.status}
                               onChange={(e) => setProjectForm({ ...projectForm, status: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
                         </div>
@@ -795,7 +949,7 @@ export default function AdminPanel() {
                             placeholder="https://example.com"
                             value={projectForm.demoUrl}
                             onChange={(e) => setProjectForm({ ...projectForm, demoUrl: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
 
@@ -803,13 +957,13 @@ export default function AdminPanel() {
                           <button
                             type="button"
                             onClick={() => setIsEditingProject(false)}
-                            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold cursor-pointer"
+                            className="px-4 py-2.5 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold cursor-pointer"
                           >
                             Batal
                           </button>
                           <button
                             type="submit"
-                            className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20"
+                            className="px-5 py-2.5 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20"
                           >
                             <Save className="w-4 h-4" />
                             <span>Simpan Portofolio</span>
@@ -821,7 +975,7 @@ export default function AdminPanel() {
 
                   {/* Portfolio List */}
                   {(!data.portfolio || data.portfolio.length === 0) ? (
-                    <div className="text-center py-10 bg-zinc-900/40 rounded-2xl border border-zinc-800/80">
+                    <div className="text-center py-10 bg-zinc-900/40 rounded-none border border-zinc-800/80">
                       <p className="text-sm text-zinc-400">Belum ada portofolio. Klik tombol "Tambah Portofolio" di atas.</p>
                     </div>
                   ) : (
@@ -829,20 +983,20 @@ export default function AdminPanel() {
                       {data.portfolio.map((p) => (
                         <div
                           key={p.id}
-                          className="bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors"
+                          className="bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 p-4 rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors"
                         >
                           <div className="flex items-center gap-3.5">
-                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-zinc-950 shrink-0 border border-zinc-800">
+                            <div className="w-14 h-14 rounded-none overflow-hidden bg-zinc-950 shrink-0 border border-zinc-800">
                               <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                   {p.category}
                                 </span>
                                 <span className="text-xs font-mono text-zinc-500">Klien: {p.client || '-'}</span>
                                 {p.metrics && (
-                                  <span className="text-[10px] font-mono text-emerald-300 bg-zinc-800 px-1.5 py-0.5 rounded">
+                                  <span className="text-[10px] font-mono text-emerald-300 bg-zinc-800 px-1.5 py-0.5 rounded-none">
                                     ⚡ {p.metrics}
                                   </span>
                                 )}
@@ -855,7 +1009,7 @@ export default function AdminPanel() {
                           <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
                             <button
                               onClick={() => handleOpenEditProject(p)}
-                              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors text-xs flex items-center gap-1 cursor-pointer"
+                              className="p-2 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors text-xs flex items-center gap-1 cursor-pointer"
                               title="Edit"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
@@ -863,7 +1017,7 @@ export default function AdminPanel() {
                             </button>
                             <button
                               onClick={() => handleDeleteProject(p.id, p.title)}
-                              className="p-2 rounded-lg bg-rose-950/30 hover:bg-rose-900/50 text-rose-400 border border-rose-500/20 transition-colors text-xs flex items-center gap-1 cursor-pointer"
+                              className="p-2 rounded-none bg-rose-950/30 hover:bg-rose-900/50 text-rose-400 border border-rose-500/20 transition-colors text-xs flex items-center gap-1 cursor-pointer"
                               title="Hapus"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -890,7 +1044,7 @@ export default function AdminPanel() {
                     {!isEditingService && (
                       <button
                         onClick={handleOpenNewService}
-                        className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
+                        className="px-4 py-2.5 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
                       >
                         <Plus className="w-4 h-4" />
                         <span>Tambah Layanan</span>
@@ -900,7 +1054,7 @@ export default function AdminPanel() {
 
                   {/* Service Form */}
                   {isEditingService ? (
-                    <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-2xl space-y-5">
+                    <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-none space-y-5">
                       <div className="flex items-center justify-between">
                         <h4 className="text-base font-bold text-emerald-400 flex items-center gap-2">
                           {editingServiceId ? '✏️ Edit Layanan' : '✨ Tambah Layanan Baru'}
@@ -923,7 +1077,7 @@ export default function AdminPanel() {
                               placeholder="Contoh: Web App Development"
                               value={serviceForm.title}
                               onChange={(e) => setServiceForm({ ...serviceForm, title: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
 
@@ -934,7 +1088,7 @@ export default function AdminPanel() {
                               placeholder="Contoh: Paling Populer"
                               value={serviceForm.badge}
                               onChange={(e) => setServiceForm({ ...serviceForm, badge: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
                         </div>
@@ -945,7 +1099,7 @@ export default function AdminPanel() {
                             <select
                               value={serviceForm.icon}
                               onChange={(e) => setServiceForm({ ...serviceForm, icon: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             >
                               <option value="Code2">Code2 (Web Development)</option>
                               <option value="LayoutTemplate">LayoutTemplate (Landing Page)</option>
@@ -965,7 +1119,7 @@ export default function AdminPanel() {
                               placeholder="React, Next.js, Node.js, PostgreSQL"
                               value={serviceForm.techStack}
                               onChange={(e) => setServiceForm({ ...serviceForm, techStack: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
                         </div>
@@ -978,7 +1132,7 @@ export default function AdminPanel() {
                             placeholder="Aplikasi web interaktif dengan arsitektur modern yang responsif, cepat, dan siap scale up..."
                             value={serviceForm.shortDesc}
                             onChange={(e) => setServiceForm({ ...serviceForm, shortDesc: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
                           />
                         </div>
 
@@ -989,7 +1143,7 @@ export default function AdminPanel() {
                             placeholder="Single Page Application (SPA) & SSR&#10;Integrasi API & Database Real-time&#10;Autentikasi Aman & Role-based Access&#10;Testing & Optimasi Performa"
                             value={serviceForm.features}
                             onChange={(e) => setServiceForm({ ...serviceForm, features: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none font-sans"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none font-sans"
                           />
                         </div>
 
@@ -997,13 +1151,13 @@ export default function AdminPanel() {
                           <button
                             type="button"
                             onClick={() => setIsEditingService(false)}
-                            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold cursor-pointer"
+                            className="px-4 py-2.5 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold cursor-pointer"
                           >
                             Batal
                           </button>
                           <button
                             type="submit"
-                            className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20"
+                            className="px-5 py-2.5 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20"
                           >
                             <Save className="w-4 h-4" />
                             <span>Simpan Layanan</span>
@@ -1015,7 +1169,7 @@ export default function AdminPanel() {
 
                   {/* Services List */}
                   {(!data.services || data.services.length === 0) ? (
-                    <div className="text-center py-10 bg-zinc-900/40 rounded-2xl border border-zinc-800/80">
+                    <div className="text-center py-10 bg-zinc-900/40 rounded-none border border-zinc-800/80">
                       <p className="text-sm text-zinc-400">Belum ada layanan. Klik tombol "Tambah Layanan" di atas.</p>
                     </div>
                   ) : (
@@ -1023,24 +1177,24 @@ export default function AdminPanel() {
                       {data.services.map((s) => (
                         <div
                           key={s.id}
-                          className="bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 p-5 rounded-2xl flex flex-col justify-between transition-colors"
+                          className="bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 p-5 rounded-none flex flex-col justify-between transition-colors"
                         >
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-800 text-emerald-400 border border-zinc-700">
+                              <span className="text-xs font-mono px-2 py-0.5 rounded-none bg-zinc-800 text-emerald-400 border border-zinc-700">
                                 {s.badge || 'Service'}
                               </span>
                               <div className="flex items-center gap-1.5">
                                 <button
                                   onClick={() => handleOpenEditService(s)}
-                                  className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
+                                  className="p-1.5 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
                                   title="Edit"
                                 >
                                   <Edit2 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteService(s.id, s.title)}
-                                  className="p-1.5 rounded-lg bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
+                                  className="p-1.5 rounded-none bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
                                   title="Hapus"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1064,7 +1218,7 @@ export default function AdminPanel() {
 
                             <div className="mt-3 flex flex-wrap gap-1">
                               {s.techStack?.map((t, idx) => (
-                                <span key={idx} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400">
+                                <span key={idx} className="text-[10px] font-mono px-1.5 py-0.5 rounded-none bg-zinc-950 text-zinc-400">
                                   {t}
                                 </span>
                               ))}
@@ -1084,7 +1238,7 @@ export default function AdminPanel() {
                 <div className="space-y-8 max-w-4xl">
                   
                   {/* Story & Vision */}
-                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl space-y-4">
+                  <div className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-none space-y-4">
                     <h3 className="text-base font-bold text-white flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-emerald-400" />
                       <span>Narasi Tentang Studio & Visi</span>
@@ -1097,7 +1251,7 @@ export default function AdminPanel() {
                           rows="3"
                           value={aboutStoryForm}
                           onChange={(e) => setAboutStoryForm(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
+                          className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
                         />
                       </div>
 
@@ -1107,14 +1261,14 @@ export default function AdminPanel() {
                           type="text"
                           value={aboutVisionForm}
                           onChange={(e) => setAboutVisionForm(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                          className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                         />
                       </div>
 
                       <div className="flex justify-end">
                         <button
                           type="submit"
-                          className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md shadow-emerald-500/20"
+                          className="px-4 py-2 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md shadow-emerald-500/20"
                         >
                           <Save className="w-3.5 h-3.5" />
                           <span>Simpan Narasi</span>
@@ -1139,7 +1293,7 @@ export default function AdminPanel() {
                             setEditingValueId(null);
                             setValueForm({ title: '', desc: '', icon: 'CheckCircle2' });
                           }}
-                          className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                          className="px-3 py-1.5 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Tambah Pilar</span>
@@ -1148,7 +1302,7 @@ export default function AdminPanel() {
                     </div>
 
                     {isEditingValue && (
-                      <form onSubmit={handleSaveValuePillar} className="p-4 bg-zinc-900/90 border border-zinc-800 rounded-2xl space-y-3">
+                      <form onSubmit={handleSaveValuePillar} className="p-4 bg-zinc-900/90 border border-zinc-800 rounded-none space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
                             <label className="block text-xs font-mono text-zinc-400 mb-1">Judul Pilar</label>
@@ -1158,7 +1312,7 @@ export default function AdminPanel() {
                               placeholder="Clean Code & Scalable"
                               value={valueForm.title}
                               onChange={(e) => setValueForm({ ...valueForm, title: e.target.value })}
-                              className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3 py-2 rounded-none bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
                           <div>
@@ -1166,7 +1320,7 @@ export default function AdminPanel() {
                             <select
                               value={valueForm.icon}
                               onChange={(e) => setValueForm({ ...valueForm, icon: e.target.value })}
-                              className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3 py-2 rounded-none bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none"
                             >
                               <option value="CheckCircle2">CheckCircle2 (Code & Quality)</option>
                               <option value="ShieldCheck">ShieldCheck (Transparansi & Keamanan)</option>
@@ -1185,20 +1339,20 @@ export default function AdminPanel() {
                             placeholder="Penjelasan pilar nilai ini..."
                             value={valueForm.desc}
                             onChange={(e) => setValueForm({ ...valueForm, desc: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none resize-none"
+                            className="w-full px-3 py-2 rounded-none bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none resize-none"
                           />
                         </div>
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => setIsEditingValue(false)}
-                            className="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 text-xs cursor-pointer"
+                            className="px-3 py-1.5 rounded-none bg-zinc-800 text-zinc-300 text-xs cursor-pointer"
                           >
                             Batal
                           </button>
                           <button
                             type="submit"
-                            className="px-4 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 font-bold text-xs cursor-pointer"
+                            className="px-4 py-1.5 rounded-none bg-emerald-500 text-zinc-950 font-bold text-xs cursor-pointer"
                           >
                             Simpan Pilar
                           </button>
@@ -1208,7 +1362,7 @@ export default function AdminPanel() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {data.about?.values?.map((val, idx) => (
-                        <div key={val.id || idx} className="p-3.5 bg-zinc-900/50 border border-zinc-800/80 rounded-xl flex items-start justify-between gap-3">
+                        <div key={val.id || idx} className="p-3.5 bg-zinc-900/50 border border-zinc-800/80 rounded-none flex items-start justify-between gap-3">
                           <div>
                             <div className="text-xs font-bold text-white flex items-center gap-1.5">
                               <span className="text-emerald-400 font-mono text-[11px]">[{val.icon || 'Icon'}]</span>
@@ -1223,7 +1377,7 @@ export default function AdminPanel() {
                                 setEditingValueId(val.id || val.title);
                                 setValueForm({ title: val.title, desc: val.desc, icon: val.icon || 'CheckCircle2' });
                               }}
-                              className="p-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
+                              className="p-1 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
                             >
                               <Edit2 className="w-3 h-3" />
                             </button>
@@ -1234,7 +1388,7 @@ export default function AdminPanel() {
                                   showToast('Pilar telah dihapus.');
                                 }
                               }}
-                              className="p-1 rounded bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
+                              className="p-1 rounded-none bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
@@ -1260,7 +1414,7 @@ export default function AdminPanel() {
                             setEditingStepId(null);
                             setStepForm({ step: '05', title: '', desc: '' });
                           }}
-                          className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                          className="px-3 py-1.5 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Tambah Alur</span>
@@ -1269,7 +1423,7 @@ export default function AdminPanel() {
                     </div>
 
                     {isEditingStep && (
-                      <form onSubmit={handleSaveWorkflowStep} className="p-4 bg-zinc-900/90 border border-zinc-800 rounded-2xl space-y-3">
+                      <form onSubmit={handleSaveWorkflowStep} className="p-4 bg-zinc-900/90 border border-zinc-800 rounded-none space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div>
                             <label className="block text-xs font-mono text-zinc-400 mb-1">Nomor Step (01, 02..)</label>
@@ -1279,7 +1433,7 @@ export default function AdminPanel() {
                               placeholder="01"
                               value={stepForm.step}
                               onChange={(e) => setStepForm({ ...stepForm, step: e.target.value })}
-                              className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none font-mono"
+                              className="w-full px-3 py-2 rounded-none bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none font-mono"
                             />
                           </div>
                           <div className="sm:col-span-2">
@@ -1290,7 +1444,7 @@ export default function AdminPanel() {
                               placeholder="Discovery & Scope"
                               value={stepForm.title}
                               onChange={(e) => setStepForm({ ...stepForm, title: e.target.value })}
-                              className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none"
+                              className="w-full px-3 py-2 rounded-none bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none"
                             />
                           </div>
                         </div>
@@ -1302,20 +1456,20 @@ export default function AdminPanel() {
                             placeholder="Penjelasan detail tahapan alur..."
                             value={stepForm.desc}
                             onChange={(e) => setStepForm({ ...stepForm, desc: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none resize-none"
+                            className="w-full px-3 py-2 rounded-none bg-zinc-950 border border-zinc-800 text-white text-xs focus:border-emerald-500 focus:outline-none resize-none"
                           />
                         </div>
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => setIsEditingStep(false)}
-                            className="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 text-xs cursor-pointer"
+                            className="px-3 py-1.5 rounded-none bg-zinc-800 text-zinc-300 text-xs cursor-pointer"
                           >
                             Batal
                           </button>
                           <button
                             type="submit"
-                            className="px-4 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 font-bold text-xs cursor-pointer"
+                            className="px-4 py-1.5 rounded-none bg-emerald-500 text-zinc-950 font-bold text-xs cursor-pointer"
                           >
                             Simpan Alur
                           </button>
@@ -1325,7 +1479,7 @@ export default function AdminPanel() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {data.about?.workflow?.map((flow, idx) => (
-                        <div key={flow.id || idx} className="p-3.5 bg-zinc-900/50 border border-zinc-800/80 rounded-xl flex items-start justify-between gap-3">
+                        <div key={flow.id || idx} className="p-3.5 bg-zinc-900/50 border border-zinc-800/80 rounded-none flex items-start justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-mono text-sm font-black text-emerald-400">{flow.step}</span>
@@ -1340,7 +1494,7 @@ export default function AdminPanel() {
                                 setEditingStepId(flow.id || flow.step);
                                 setStepForm({ step: flow.step, title: flow.title, desc: flow.desc });
                               }}
-                              className="p-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
+                              className="p-1 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
                             >
                               <Edit2 className="w-3 h-3" />
                             </button>
@@ -1351,7 +1505,7 @@ export default function AdminPanel() {
                                   showToast('Tahapan alur telah dihapus.');
                                 }
                               }}
-                              className="p-1 rounded bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
+                              className="p-1 rounded-none bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
@@ -1377,7 +1531,7 @@ export default function AdminPanel() {
                     {!isEditingFaq && (
                       <button
                         onClick={handleOpenNewFaq}
-                        className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
+                        className="px-4 py-2.5 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/20"
                       >
                         <Plus className="w-4 h-4" />
                         <span>Tambah Pertanyaan Baru</span>
@@ -1387,7 +1541,7 @@ export default function AdminPanel() {
 
                   {/* FAQ Form */}
                   {isEditingFaq && (
-                    <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-2xl space-y-4">
+                    <div className="bg-zinc-900/80 border border-zinc-800 p-6 rounded-none space-y-4">
                       <h4 className="text-base font-bold text-emerald-400">
                         {editingFaqId ? '✏️ Edit Pertanyaan FAQ' : '✨ Tambah Pertanyaan Baru'}
                       </h4>
@@ -1401,7 +1555,7 @@ export default function AdminPanel() {
                             placeholder="Contoh: Berapa lama estimasi pengerjaan proyek?"
                             value={faqForm.q}
                             onChange={(e) => setFaqForm({ ...faqForm, q: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
 
@@ -1413,7 +1567,7 @@ export default function AdminPanel() {
                             placeholder="Tuliskan jawaban yang ramah, jelas, dan meyakinkan..."
                             value={faqForm.a}
                             onChange={(e) => setFaqForm({ ...faqForm, a: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
                           />
                         </div>
 
@@ -1421,13 +1575,13 @@ export default function AdminPanel() {
                           <button
                             type="button"
                             onClick={() => setIsEditingFaq(false)}
-                            className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-xs font-semibold cursor-pointer"
+                            className="px-4 py-2 rounded-none bg-zinc-800 text-zinc-300 text-xs font-semibold cursor-pointer"
                           >
                             Batal
                           </button>
                           <button
                             type="submit"
-                            className="px-5 py-2 rounded-xl bg-emerald-500 text-zinc-950 text-xs font-bold cursor-pointer shadow-lg shadow-emerald-500/20"
+                            className="px-5 py-2 rounded-none bg-emerald-500 text-zinc-950 text-xs font-bold cursor-pointer shadow-lg shadow-emerald-500/20"
                           >
                             Simpan FAQ
                           </button>
@@ -1438,7 +1592,7 @@ export default function AdminPanel() {
 
                   {/* FAQ List */}
                   {(!data.faqs || data.faqs.length === 0) ? (
-                    <div className="text-center py-10 bg-zinc-900/40 rounded-2xl border border-zinc-800/80">
+                    <div className="text-center py-10 bg-zinc-900/40 rounded-none border border-zinc-800/80">
                       <p className="text-sm text-zinc-400">Belum ada FAQ. Klik tombol "Tambah Pertanyaan Baru" di atas.</p>
                     </div>
                   ) : (
@@ -1446,7 +1600,7 @@ export default function AdminPanel() {
                       {data.faqs.map((faq, idx) => (
                         <div
                           key={faq.id || idx}
-                          className="bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 p-4 rounded-2xl flex items-start justify-between gap-4 transition-colors"
+                          className="bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 p-4 rounded-none flex items-start justify-between gap-4 transition-colors"
                         >
                           <div className="space-y-1 flex-1">
                             <div className="text-sm font-bold text-white flex items-center gap-2">
@@ -1459,14 +1613,14 @@ export default function AdminPanel() {
                           <div className="flex items-center gap-1.5 shrink-0">
                             <button
                               onClick={() => handleOpenEditFaq(faq)}
-                              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
+                              className="p-2 rounded-none bg-zinc-800 hover:bg-zinc-700 text-zinc-300 cursor-pointer"
                               title="Edit"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDeleteFaq(faq.id || faq.q, faq.q)}
-                              className="p-2 rounded-lg bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
+                              className="p-2 rounded-none bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 cursor-pointer"
                               title="Hapus"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -1492,7 +1646,7 @@ export default function AdminPanel() {
                   <form onSubmit={handleSaveSettings} className="space-y-6">
                     
                     {/* Brand Info */}
-                    <div className="bg-zinc-900/60 p-5 rounded-2xl border border-zinc-800 space-y-4">
+                    <div className="bg-zinc-900/60 p-5 rounded-none border border-zinc-800 space-y-4">
                       <h4 className="text-xs font-mono uppercase text-emerald-400 tracking-wider">Identitas Studio</h4>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1502,7 +1656,7 @@ export default function AdminPanel() {
                             type="text"
                             value={settingsForm.name}
                             onChange={(e) => setSettingsForm({ ...settingsForm, name: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
 
@@ -1512,14 +1666,14 @@ export default function AdminPanel() {
                             type="text"
                             value={settingsForm.availability}
                             onChange={(e) => setSettingsForm({ ...settingsForm, availability: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                       </div>
                     </div>
 
                     {/* Hero Headlines */}
-                    <div className="bg-zinc-900/60 p-5 rounded-2xl border border-zinc-800 space-y-4">
+                    <div className="bg-zinc-900/60 p-5 rounded-none border border-zinc-800 space-y-4">
                       <h4 className="text-xs font-mono uppercase text-emerald-400 tracking-wider">Teks Hero Banner</h4>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1530,7 +1684,7 @@ export default function AdminPanel() {
                             placeholder="Butuh Website?"
                             value={settingsForm.heroHeadline1}
                             onChange={(e) => setSettingsForm({ ...settingsForm, heroHeadline1: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                         <div>
@@ -1540,7 +1694,7 @@ export default function AdminPanel() {
                             placeholder="Butuh Aplikasi?"
                             value={settingsForm.heroHeadlineHighlight1}
                             onChange={(e) => setSettingsForm({ ...settingsForm, heroHeadlineHighlight1: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                         <div>
@@ -1550,7 +1704,7 @@ export default function AdminPanel() {
                             placeholder="Gass Bareng Kitaa Ajaa!"
                             value={settingsForm.heroHeadlineHighlight2}
                             onChange={(e) => setSettingsForm({ ...settingsForm, heroHeadlineHighlight2: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                       </div>
@@ -1561,7 +1715,7 @@ export default function AdminPanel() {
                           rows="2"
                           value={settingsForm.subHeadline}
                           onChange={(e) => setSettingsForm({ ...settingsForm, subHeadline: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
+                          className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none resize-none"
                         />
                       </div>
 
@@ -1571,25 +1725,25 @@ export default function AdminPanel() {
                           rows="3"
                           value={settingsForm.trustHighlights}
                           onChange={(e) => setSettingsForm({ ...settingsForm, trustHighlights: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none font-sans"
+                          className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none font-sans"
                         />
                       </div>
                     </div>
 
                     {/* Stats Cards (4 items) */}
-                    <div className="bg-zinc-900/60 p-5 rounded-2xl border border-zinc-800 space-y-4">
+                    <div className="bg-zinc-900/60 p-5 rounded-none border border-zinc-800 space-y-4">
                       <h4 className="text-xs font-mono uppercase text-emerald-400 tracking-wider">Statistik Studio (Stats Grid)</h4>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         {statsForm.map((stat, idx) => (
-                          <div key={idx} className="p-3 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2">
+                          <div key={idx} className="p-3 bg-zinc-950 rounded-none border border-zinc-800 space-y-2">
                             <div>
                               <label className="block text-[10px] font-mono text-zinc-500 uppercase">Nilai / Angka</label>
                               <input
                                 type="text"
                                 value={stat.value}
                                 onChange={(e) => handleStatChange(idx, 'value', e.target.value)}
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-emerald-400 font-bold text-sm focus:outline-none"
+                                className="w-full px-2.5 py-1.5 rounded-none bg-zinc-900 border border-zinc-800 text-emerald-400 font-bold text-sm focus:outline-none"
                               />
                             </div>
                             <div>
@@ -1598,7 +1752,7 @@ export default function AdminPanel() {
                                 type="text"
                                 value={stat.label}
                                 onChange={(e) => handleStatChange(idx, 'label', e.target.value)}
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white text-xs focus:outline-none"
+                                className="w-full px-2.5 py-1.5 rounded-none bg-zinc-900 border border-zinc-800 text-white text-xs focus:outline-none"
                               />
                             </div>
                             <div>
@@ -1607,7 +1761,7 @@ export default function AdminPanel() {
                                 type="text"
                                 value={stat.desc}
                                 onChange={(e) => handleStatChange(idx, 'desc', e.target.value)}
-                                className="w-full px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 text-[11px] focus:outline-none"
+                                className="w-full px-2.5 py-1.5 rounded-none bg-zinc-900 border border-zinc-800 text-zinc-400 text-[11px] focus:outline-none"
                               />
                             </div>
                           </div>
@@ -1616,7 +1770,7 @@ export default function AdminPanel() {
                     </div>
 
                     {/* Contact & Socials */}
-                    <div className="bg-zinc-900/60 p-5 rounded-2xl border border-zinc-800 space-y-4">
+                    <div className="bg-zinc-900/60 p-5 rounded-none border border-zinc-800 space-y-4">
                       <h4 className="text-xs font-mono uppercase text-emerald-400 tracking-wider">Informasi Kontak & Integrasi</h4>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1626,7 +1780,7 @@ export default function AdminPanel() {
                             type="text"
                             value={settingsForm.whatsappNumber}
                             onChange={(e) => setSettingsForm({ ...settingsForm, whatsappNumber: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none font-mono"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none font-mono"
                           />
                         </div>
 
@@ -1636,7 +1790,7 @@ export default function AdminPanel() {
                             type="email"
                             value={settingsForm.email}
                             onChange={(e) => setSettingsForm({ ...settingsForm, email: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                       </div>
@@ -1648,7 +1802,7 @@ export default function AdminPanel() {
                             type="text"
                             value={settingsForm.location}
                             onChange={(e) => setSettingsForm({ ...settingsForm, location: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
 
@@ -1658,7 +1812,7 @@ export default function AdminPanel() {
                             type="text"
                             value={settingsForm.whatsappMessage}
                             onChange={(e) => setSettingsForm({ ...settingsForm, whatsappMessage: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                       </div>
@@ -1667,7 +1821,7 @@ export default function AdminPanel() {
                     <div className="pt-2 flex justify-end">
                       <button
                         type="submit"
-                        className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20"
+                        className="px-6 py-3 rounded-none bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20"
                       >
                         <Save className="w-4 h-4" />
                         <span>Simpan Seluruh Pengaturan</span>

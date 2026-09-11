@@ -31,7 +31,7 @@ function MainContent() {
   }, [setIsAdminOpen]);
 
   return (
-    <div className="min-h-screen bg-[#19222c] text-slate-100 flex flex-col selection:bg-[#0073ea]/30 selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-black text-zinc-100 flex flex-col selection:bg-zinc-800 selection:text-white relative overflow-x-hidden">
       {!isAdminOpen && <BinaryArithmeticBackground />}
       <Navbar />
       <main className="flex-grow relative z-10">

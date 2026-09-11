@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle, Terminal } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useTransition } from '../context/TransitionContext';
 
@@ -56,33 +56,36 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled
-          ? 'bg-[#19222c]/90 backdrop-blur-md border-b border-slate-800/80 shadow-md py-3.5'
-          : 'bg-transparent py-5'
-        }`}
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-200 border-b ${
+        scrolled
+          ? 'bg-black/85 backdrop-blur-md border-zinc-800/60 py-3.5'
+          : 'bg-transparent border-transparent py-5'
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo Branding */}
+          
+          {/* Logo & Studio Identity */}
           <a
             href="#"
             onClick={(e) => handleNavClick(e, '#')}
-            className="flex items-center gap-2.5 group cursor-pointer"
+            className="flex items-center gap-2.5 cursor-pointer group"
           >
-            <div className="w-10 h-10 rounded-xl bg-[#0073ea]/15 border border-[#0073ea]/35 flex items-center justify-center text-[#0073ea] group-hover:border-[#0073ea]/70 group-hover:scale-105 transition-all shadow-sm">
-              <Terminal className="w-5 h-5 group-hover:rotate-6 transition-transform duration-300" />
+            <div className="w-8 h-8 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white text-xs font-bold transition-colors group-hover:border-zinc-600">
+              VG
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
+              <span className="text-sm font-semibold tracking-tight text-white">
                 {data.name}
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0073ea] animate-pulse"></span>
               </span>
-              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-widest font-medium">Software Studio</span>
+              <span className="text-[10px] text-zinc-500 uppercase tracking-wider">
+                Software Studio
+              </span>
             </div>
           </a>
 
-          {/* Desktop Navigation with Animated Pill */}
-          <nav className="hidden md:flex items-center gap-1 bg-[#19222c]/85 border border-slate-700/80 rounded-full px-2 py-1.5 backdrop-blur-md shadow-lg">
+          {/* Clean Minimalist Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-7">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
               return (
@@ -90,10 +93,11 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href, link.name)}
-                  className={`relative px-4 py-1.5 text-sm font-medium transition-all duration-200 rounded-full cursor-pointer ${isActive
-                      ? 'text-white bg-[#0073ea] shadow-md shadow-[#0073ea]/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/70'
-                    }`}
+                  className={`text-sm transition-colors cursor-pointer ${
+                    isActive
+                      ? 'text-white font-medium'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
                 >
                   {link.name}
                 </a>
@@ -101,16 +105,16 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center gap-3">
+          {/* Clean Primary CTA Button */}
+          <div className="hidden md:flex items-center gap-3">
             <a
               href={waLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#0073ea] hover:bg-[#0060c4] transition-all duration-200 rounded-xl shadow-sm shadow-[#0073ea]/30 hover:shadow-[#0073ea]/50 hover:-translate-y-0.5"
+              className="bg-white text-black px-4 py-2 text-sm font-medium rounded-md hover:bg-zinc-200 transition-all cursor-pointer inline-flex items-center gap-2 shadow-xs"
             >
               <MessageCircle className="w-4 h-4 fill-current" />
-              <span>WhatsApp Us</span>
+              <span>Initiate Chat</span>
             </a>
           </div>
 
@@ -120,18 +124,18 @@ export default function Navbar() {
               href={waLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-[#0073ea] bg-[#0073ea]/15 border border-[#0073ea]/30 rounded-lg text-sm"
+              className="p-2 text-zinc-300 bg-zinc-900 border border-zinc-800 rounded-md text-xs"
               title="Chat WhatsApp"
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="w-4 h-4" />
             </a>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors border border-slate-700 bg-slate-900/80 cursor-pointer"
+              className="p-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-900 transition-colors border border-zinc-800 bg-black cursor-pointer"
               aria-label="Toggle Menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -141,44 +145,42 @@ export default function Navbar() {
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-30 md:hidden animate-fade-in"
+            className="fixed inset-0 bg-black/80 backdrop-blur-xs z-30 md:hidden"
             onClick={() => setIsOpen(false)}
           />
-          <div className="relative z-40 md:hidden bg-[#19222c]/98 backdrop-blur-2xl border-b border-slate-800 px-4 pt-3 pb-6 space-y-3 mt-2 shadow-2xl animate-fade-in">
-          <div className="flex flex-col space-y-1">
-            {navLinks.map((link) => {
-              const isActive = activeSection === link.id;
-              return (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href, link.name)}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
-                      ? 'bg-[#0073ea]/20 text-[#0073ea] font-semibold border border-[#0073ea]/40'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent'
+          <div className="relative z-40 md:hidden bg-[#09090b] border-b border-zinc-800 px-5 pt-3 pb-6 mt-3 shadow-2xl space-y-4">
+            <div className="flex flex-col space-y-1">
+              {navLinks.map((link) => {
+                const isActive = activeSection === link.id;
+                return (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href, link.name)}
+                    className={`px-3 py-2.5 rounded-md text-sm transition-colors ${
+                      isActive
+                        ? 'bg-zinc-900 text-white font-medium'
+                        : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'
                     }`}
-                >
-                  <span>{link.name}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#0073ea]" />}
-                </a>
-              );
-            })}
+                  >
+                    {link.name}
+                  </a>
+                );
+              })}
+            </div>
+            <div className="pt-2">
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 bg-white text-black py-2.5 px-4 rounded-md text-sm font-medium hover:bg-zinc-200 transition-all"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>WhatsApp Consultation</span>
+              </a>
+            </div>
           </div>
-
-          <div className="pt-2 border-t border-slate-800">
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setIsOpen(false)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0073ea] text-white font-semibold text-sm hover:bg-[#0060c4] transition-colors shadow-md shadow-[#0073ea]/20"
-            >
-              <MessageCircle className="w-4 h-4 fill-current" />
-              <span>Konsultasi via WhatsApp</span>
-            </a>
-          </div>
-        </div>
-      </>
+        </>
       )}
     </header>
   );

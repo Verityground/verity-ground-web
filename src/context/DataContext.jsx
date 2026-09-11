@@ -7,72 +7,35 @@ const DataContext = createContext();
 
 const STORAGE_KEY = 'verity_ground_data_v1';
 
-// Helper to merge loaded data with initial defaults and auto-migrate legacy name
+// Helper to merge loaded Firestore data with initial fallback without overriding user custom edits
 function mergeWithDefaults(savedData, defaults) {
   if (!savedData || typeof savedData !== 'object') return defaults;
-  
-  const updatedData = { ...savedData };
-  if (updatedData.name === 'Verity Studio' || !updatedData.name) {
-    updatedData.name = defaults.name;
-  }
-  if (updatedData.whatsappMessage?.includes('Verity Studio')) {
-    updatedData.whatsappMessage = updatedData.whatsappMessage.replace(/Verity Studio/g, 'Verity Ground');
-  }
-  if (updatedData.email?.includes('veritystudio.dev') || updatedData.email?.includes('verityground.dev')) {
-    updatedData.email = 'verityground@gmail.com';
-  }
-  if (updatedData.about?.story?.includes('Verity Studio')) {
-    updatedData.about = {
-      ...updatedData.about,
-      story: updatedData.about.story.replace(/Verity Studio/g, 'Verity Ground')
-    };
-  }
-  if (
-    !updatedData.heroHeadline1 ||
-    updatedData.heroHeadline1 === 'Jasa Pembuatan' ||
-    updatedData.heroHeadlineHighlight2 !== 'Gass Bareng Kitaa Ajaa!'
-  ) {
-    updatedData.heroHeadline1 = defaults.heroHeadline1;
-    updatedData.heroHeadlineHighlight1 = defaults.heroHeadlineHighlight1;
-    updatedData.heroHeadlineHighlight2 = defaults.heroHeadlineHighlight2;
-  }
-  if (updatedData.subHeadline?.includes('kelas dunia')) {
-    updatedData.subHeadline = defaults.subHeadline;
-  }
-  // Migrate stats: keep only the 2 cards and keep Proyek Selesai count synced
-  if (
-    !Array.isArray(updatedData.stats) ||
-    updatedData.stats.length > 2 ||
-    updatedData.stats.some(s => s.label?.includes('Satisfaction') || s.label?.includes('Page Load'))
-  ) {
-    const portfolioLen = Array.isArray(updatedData.portfolio) ? updatedData.portfolio.length : defaults.portfolio.length;
-    updatedData.stats = [
-      { id: "stat-1", value: String(portfolioLen), label: "Proyek Selesai", desc: "Produk web & app live" },
-      { id: "stat-4", value: "24/7", label: "Monitoring & Support", desc: "Garansi pasca-peluncuran" },
-    ];
-  } else {
-    const portfolioLen = Array.isArray(updatedData.portfolio) ? updatedData.portfolio.length : defaults.portfolio.length;
-    updatedData.stats = updatedData.stats.map(s =>
-      s.id === 'stat-1' || s.label?.toLowerCase().includes('proyek')
-        ? { ...s, value: String(portfolioLen) }
-        : s
-    );
-  }
 
   return {
     ...defaults,
-    ...updatedData,
+    ...savedData,
+    name: savedData.name ?? defaults.name,
+    tagline: savedData.tagline ?? defaults.tagline,
+    heroHeadline1: savedData.heroHeadline1 ?? defaults.heroHeadline1,
+    heroHeadlineHighlight1: savedData.heroHeadlineHighlight1 ?? defaults.heroHeadlineHighlight1,
+    heroHeadlineHighlight2: savedData.heroHeadlineHighlight2 ?? defaults.heroHeadlineHighlight2,
+    subHeadline: savedData.subHeadline ?? defaults.subHeadline,
+    whatsappNumber: savedData.whatsappNumber ?? defaults.whatsappNumber,
+    whatsappMessage: savedData.whatsappMessage ?? defaults.whatsappMessage,
+    email: savedData.email ?? defaults.email,
+    location: savedData.location ?? defaults.location,
+    availability: savedData.availability ?? defaults.availability,
+    trustHighlights: Array.isArray(savedData.trustHighlights) ? savedData.trustHighlights : defaults.trustHighlights,
+    stats: Array.isArray(savedData.stats) && savedData.stats.length > 0 ? savedData.stats : defaults.stats,
+    services: Array.isArray(savedData.services) ? savedData.services : defaults.services,
+    portfolio: Array.isArray(savedData.portfolio) ? savedData.portfolio : defaults.portfolio,
+    faqs: Array.isArray(savedData.faqs) ? savedData.faqs : defaults.faqs,
     about: {
       ...defaults.about,
-      ...(updatedData.about || {}),
-      values: Array.isArray(updatedData.about?.values) ? updatedData.about.values : defaults.about.values,
-      workflow: Array.isArray(updatedData.about?.workflow) ? updatedData.about.workflow : defaults.about.workflow
-    },
-    stats: Array.isArray(updatedData.stats) ? updatedData.stats : defaults.stats,
-    trustHighlights: Array.isArray(updatedData.trustHighlights) ? updatedData.trustHighlights : defaults.trustHighlights,
-    services: Array.isArray(updatedData.services) && updatedData.services.length > 0 ? updatedData.services : defaults.services,
-    portfolio: Array.isArray(updatedData.portfolio) && updatedData.portfolio.length > 0 ? updatedData.portfolio : defaults.portfolio,
-    faqs: Array.isArray(updatedData.faqs) ? updatedData.faqs : defaults.faqs
+      ...(savedData.about || {}),
+      values: Array.isArray(savedData.about?.values) ? savedData.about.values : defaults.about.values,
+      workflow: Array.isArray(savedData.about?.workflow) ? savedData.about.workflow : defaults.about.workflow
+    }
   };
 }
 
@@ -100,7 +63,7 @@ export function DataProvider({ children }) {
   const [syncStatus, setSyncStatus] = useState('connecting');
   const isSyncingRef = useRef(false);
 
-  // Sync data to Cloud Firestore
+  // Sync data payload directly to Cloud Firestore
   const syncToFirestore = useCallback(async (payload) => {
     setSyncStatus('saving');
     try {
@@ -113,13 +76,15 @@ export function DataProvider({ children }) {
         updatedAt: new Date().toISOString()
       }, { merge: true });
       setSyncStatus('synced');
+      return true;
     } catch (err) {
       console.error('Error syncing to Firestore:', err);
       setSyncStatus('error');
+      throw err;
     } finally {
       setTimeout(() => {
         isSyncingRef.current = false;
-      }, 500);
+      }, 300);
     }
   }, []);
 
@@ -154,18 +119,22 @@ export function DataProvider({ children }) {
     return () => unsubscribe();
   }, [syncToFirestore]);
 
-  // Combined state updater that mutates locally and syncs to Firestore
-  const updateDataAndSync = useCallback((updater) => {
+  // Combined state updater that mutates locally and persists to Firestore asynchronously
+  const updateDataAndSync = useCallback(async (updater) => {
+    let nextValue;
     setData((prev) => {
-      const next = typeof updater === 'function' ? updater(prev) : updater;
+      nextValue = typeof updater === 'function' ? updater(prev) : updater;
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextValue));
       } catch (e) {
         console.error('Failed to save to localStorage', e);
       }
-      syncToFirestore(next);
-      return next;
+      return nextValue;
     });
+
+    if (nextValue) {
+      return await syncToFirestore(nextValue);
+    }
   }, [syncToFirestore]);
 
   // Auth handler
@@ -184,13 +153,13 @@ export function DataProvider({ children }) {
   };
 
   // --- Portfolio CRUD ---
-  const addPortfolio = (newProject) => {
+  const addPortfolio = async (newProject) => {
     const projectWithId = {
       ...newProject,
       id: Date.now(),
       status: newProject.status || 'Live Production'
     };
-    updateDataAndSync((prev) => {
+    return await updateDataAndSync((prev) => {
       const newPortfolio = [projectWithId, ...prev.portfolio];
       const updatedStats = prev.stats?.map((s) =>
         s.id === 'stat-1' || s.label?.toLowerCase().includes('proyek')
@@ -205,15 +174,15 @@ export function DataProvider({ children }) {
     });
   };
 
-  const updatePortfolio = (id, updatedProject) => {
-    updateDataAndSync((prev) => ({
+  const updatePortfolio = async (id, updatedProject) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       portfolio: prev.portfolio.map((p) => (p.id === id ? { ...p, ...updatedProject } : p))
     }));
   };
 
-  const deletePortfolio = (id) => {
-    updateDataAndSync((prev) => {
+  const deletePortfolio = async (id) => {
+    return await updateDataAndSync((prev) => {
       const newPortfolio = prev.portfolio.filter((p) => p.id !== id);
       const updatedStats = prev.stats?.map((s) =>
         s.id === 'stat-1' || s.label?.toLowerCase().includes('proyek')
@@ -229,35 +198,35 @@ export function DataProvider({ children }) {
   };
 
   // --- Services CRUD ---
-  const addService = (newService) => {
+  const addService = async (newService) => {
     const serviceWithId = {
       ...newService,
       id: newService.id || `service-${Date.now()}`,
       icon: newService.icon || 'Code2'
     };
-    updateDataAndSync((prev) => ({
+    return await updateDataAndSync((prev) => ({
       ...prev,
       services: [...prev.services, serviceWithId]
     }));
   };
 
-  const updateService = (id, updatedService) => {
-    updateDataAndSync((prev) => ({
+  const updateService = async (id, updatedService) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       services: prev.services.map((s) => (s.id === id ? { ...s, ...updatedService } : s))
     }));
   };
 
-  const deleteService = (id) => {
-    updateDataAndSync((prev) => ({
+  const deleteService = async (id) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       services: prev.services.filter((s) => s.id !== id)
     }));
   };
 
   // --- About Us & Values & Workflow CRUD ---
-  const updateAboutStory = (aboutStory, aboutVision) => {
-    updateDataAndSync((prev) => ({
+  const updateAboutStory = async (aboutStory, aboutVision) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -267,12 +236,12 @@ export function DataProvider({ children }) {
     }));
   };
 
-  const addValuePillar = (newValue) => {
+  const addValuePillar = async (newValue) => {
     const valueWithId = {
       ...newValue,
       id: newValue.id || `val-${Date.now()}`
     };
-    updateDataAndSync((prev) => ({
+    return await updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -281,8 +250,8 @@ export function DataProvider({ children }) {
     }));
   };
 
-  const updateValuePillar = (id, updatedValue) => {
-    updateDataAndSync((prev) => ({
+  const updateValuePillar = async (id, updatedValue) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -291,8 +260,8 @@ export function DataProvider({ children }) {
     }));
   };
 
-  const deleteValuePillar = (id) => {
-    updateDataAndSync((prev) => ({
+  const deleteValuePillar = async (id) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -301,12 +270,12 @@ export function DataProvider({ children }) {
     }));
   };
 
-  const addWorkflowStep = (newStep) => {
+  const addWorkflowStep = async (newStep) => {
     const stepWithId = {
       ...newStep,
       id: newStep.id || `wf-${Date.now()}`
     };
-    updateDataAndSync((prev) => ({
+    return await updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -315,8 +284,8 @@ export function DataProvider({ children }) {
     }));
   };
 
-  const updateWorkflowStep = (id, updatedStep) => {
-    updateDataAndSync((prev) => ({
+  const updateWorkflowStep = async (id, updatedStep) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -325,8 +294,8 @@ export function DataProvider({ children }) {
     }));
   };
 
-  const deleteWorkflowStep = (id) => {
-    updateDataAndSync((prev) => ({
+  const deleteWorkflowStep = async (id) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -336,57 +305,57 @@ export function DataProvider({ children }) {
   };
 
   // --- FAQs CRUD ---
-  const addFaq = (newFaq) => {
+  const addFaq = async (newFaq) => {
     const faqWithId = {
       ...newFaq,
       id: newFaq.id || `faq-${Date.now()}`
     };
-    updateDataAndSync((prev) => ({
+    return await updateDataAndSync((prev) => ({
       ...prev,
       faqs: [...prev.faqs, faqWithId]
     }));
   };
 
-  const updateFaq = (id, updatedFaq) => {
-    updateDataAndSync((prev) => ({
+  const updateFaq = async (id, updatedFaq) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       faqs: prev.faqs.map((f) => (f.id === id || f.q === id ? { ...f, ...updatedFaq } : f))
     }));
   };
 
-  const deleteFaq = (id) => {
-    updateDataAndSync((prev) => ({
+  const deleteFaq = async (id) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       faqs: prev.faqs.filter((f) => f.id !== id && f.q !== id)
     }));
   };
 
   // --- Stats CRUD & General Settings ---
-  const updateStats = (statsArray) => {
-    updateDataAndSync((prev) => ({
+  const updateStats = async (statsArray) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       stats: statsArray
     }));
   };
 
-  const updateGeneralSettings = (newSettings) => {
-    updateDataAndSync((prev) => ({
+  const updateGeneralSettings = async (newSettings) => {
+    return await updateDataAndSync((prev) => ({
       ...prev,
       ...newSettings
     }));
   };
 
   // Reset to default factory data
-  const resetToDefault = () => {
+  const resetToDefault = async () => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('verity_studio_data_v2');
     localStorage.removeItem('verity_studio_data_v1');
-    updateDataAndSync(initialCompanyData);
+    return await updateDataAndSync(initialCompanyData);
   };
 
   // Force sync manually
-  const forceSync = () => {
-    return syncToFirestore(data);
+  const forceSync = async () => {
+    return await syncToFirestore(data);
   };
 
   return (
