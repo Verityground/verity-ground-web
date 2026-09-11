@@ -64,7 +64,7 @@ export function TransitionProvider({ children }) {
             return (
               <div
                 key={colIndex}
-                className={`flex-1 bg-slate-950 border-r border-slate-900/50 noomo-curtain-strip ${
+                className={`flex-1 bg-[#19222c] border-r border-slate-800/60 noomo-curtain-strip ${
                   phase === 'enter'
                     ? 'scale-y-100 origin-bottom'
                     : phase === 'exit'
@@ -85,14 +85,14 @@ export function TransitionProvider({ children }) {
             phase === 'enter' ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-mono text-xs uppercase tracking-widest mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#0073ea]/15 border border-[#0073ea]/40 text-[#0073ea] font-mono text-xs uppercase tracking-widest mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0073ea] animate-pulse" />
             <span>VERITY GROUND • STUDIO</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-mono uppercase tracking-tight">
             {sectionLabel || 'NAVIGATING'}
           </h2>
-          <div className="w-12 h-0.5 bg-emerald-500 mt-4 rounded-full animate-pulse" />
+          <div className="w-12 h-0.5 bg-[#0073ea] mt-4 rounded-full animate-pulse" />
         </div>
       </div>
     </TransitionContext.Provider>

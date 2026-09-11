@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: content
+    // Document ID: company
+    // Fields:
+    //   - name: string (required, size <= 100)
+    //   - email: string (required, size <= 100)
+    //   - whatsappNumber: string (required, size <= 30)
+    //   - tagline: string (optional, size <= 200)
+    //   - heroHeadline1: string (optional, size <= 100)
+    //   - heroHeadlineHighlight1: string (optional, size <= 100)
+    //   - heroHeadlineHighlight2: string (optional, size <= 100)
+    //   - subHeadline: string (optional, size <= 500)
+    //   - whatsappMessage: string (optional, size <= 500)
+    //   - location: string (optional, size <= 100)
+    //   - availability: string (optional, size <= 100)
+    //   - trustHighlights: list (required, size <= 20)
+    //   - stats: list (required, size <= 20)
+    //   - services: list (required, size <= 50)
+    //   - portfolio: list (required, size <= 100)
+    //   - about: map (required)
+    //   - faqs: list (optional, size <= 50)
+    //   - updatedAt: string or timestamp (optional)
+    //
+    // ===============================================================
+
+    // Helper functions
+    function hasRequiredFields(data) {
+      return data.keys().hasAll([
+        'name',
+        'email',
+        'whatsappNumber',
+        'stats',
+        'services',
+        'portfolio',
+        'about'
+      ]);
+    }
+
+    function isValidCompanyData(data) {
+      return hasRequiredFields(data) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 100 &&
+        data.whatsappNumber is string && data.whatsappNumber.size() > 0 && data.whatsappNumber.size() <= 30 &&
+        data.stats is list && data.stats.size() <= 20 &&
+        data.services is list && data.services.size() <= 50 &&
+        data.portfolio is list && data.portfolio.size() <= 100 &&
+        data.about is map;
+    }
+
+    // Public website company content
+    match /content/company {
+      // Allow anyone to read the company website content
+      allow read: if true;
+
+      // Allow write only if schema matches valid company data
+      allow create, update: if isValidCompanyData(request.resource.data);
+
+      // Prevent accidental deletion of company document
+      allow delete: if false;
+    }
+
+    // Default deny for any other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

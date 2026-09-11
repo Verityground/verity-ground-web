@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { companyData as initialCompanyData } from '../data/companyData';
 
 const DataContext = createContext();
@@ -25,6 +27,37 @@ function mergeWithDefaults(savedData, defaults) {
       story: updatedData.about.story.replace(/Verity Studio/g, 'Verity Ground')
     };
   }
+  if (
+    !updatedData.heroHeadline1 ||
+    updatedData.heroHeadline1 === 'Jasa Pembuatan' ||
+    updatedData.heroHeadlineHighlight2 !== 'Gass Bareng Kitaa Ajaa!'
+  ) {
+    updatedData.heroHeadline1 = defaults.heroHeadline1;
+    updatedData.heroHeadlineHighlight1 = defaults.heroHeadlineHighlight1;
+    updatedData.heroHeadlineHighlight2 = defaults.heroHeadlineHighlight2;
+  }
+  if (updatedData.subHeadline?.includes('kelas dunia')) {
+    updatedData.subHeadline = defaults.subHeadline;
+  }
+  // Migrate stats: keep only the 2 cards and keep Proyek Selesai count synced
+  if (
+    !Array.isArray(updatedData.stats) ||
+    updatedData.stats.length > 2 ||
+    updatedData.stats.some(s => s.label?.includes('Satisfaction') || s.label?.includes('Page Load'))
+  ) {
+    const portfolioLen = Array.isArray(updatedData.portfolio) ? updatedData.portfolio.length : defaults.portfolio.length;
+    updatedData.stats = [
+      { id: "stat-1", value: String(portfolioLen), label: "Proyek Selesai", desc: "Produk web & app live" },
+      { id: "stat-4", value: "24/7", label: "Monitoring & Support", desc: "Garansi pasca-peluncuran" },
+    ];
+  } else {
+    const portfolioLen = Array.isArray(updatedData.portfolio) ? updatedData.portfolio.length : defaults.portfolio.length;
+    updatedData.stats = updatedData.stats.map(s =>
+      s.id === 'stat-1' || s.label?.toLowerCase().includes('proyek')
+        ? { ...s, value: String(portfolioLen) }
+        : s
+    );
+  }
 
   return {
     ...defaults,
@@ -44,6 +77,7 @@ function mergeWithDefaults(savedData, defaults) {
 }
 
 export function DataProvider({ children }) {
+  // Initial local state from localStorage cache or initialCompanyData for instant hydration
   const [data, setData] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('verity_studio_data_v3');
@@ -62,14 +96,77 @@ export function DataProvider({ children }) {
     return sessionStorage.getItem('verity_admin_auth') === 'true';
   });
 
-  // Save to localStorage on changes
-  useEffect(() => {
+  // Sync status: 'connecting' | 'synced' | 'saving' | 'error'
+  const [syncStatus, setSyncStatus] = useState('connecting');
+  const isSyncingRef = useRef(false);
+
+  // Sync data to Cloud Firestore
+  const syncToFirestore = useCallback(async (payload) => {
+    setSyncStatus('saving');
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error('Failed to save to localStorage', e);
+      isSyncingRef.current = true;
+      const docRef = doc(db, 'content', 'company');
+      // Clean payload of any undefined values
+      const cleaned = JSON.parse(JSON.stringify(payload));
+      await setDoc(docRef, {
+        ...cleaned,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+      setSyncStatus('synced');
+    } catch (err) {
+      console.error('Error syncing to Firestore:', err);
+      setSyncStatus('error');
+    } finally {
+      setTimeout(() => {
+        isSyncingRef.current = false;
+      }, 500);
     }
-  }, [data]);
+  }, []);
+
+  // Listen to real-time changes from Firebase Firestore
+  useEffect(() => {
+    const docRef = doc(db, 'content', 'company');
+
+    const unsubscribe = onSnapshot(
+      docRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const remoteData = docSnap.data();
+          const merged = mergeWithDefaults(remoteData, initialCompanyData);
+          setData(merged);
+          setSyncStatus('synced');
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+          } catch (e) {
+            console.error('Failed to cache data to localStorage', e);
+          }
+        } else {
+          // Document does not exist in Firestore yet: seed it automatically
+          syncToFirestore(initialCompanyData);
+        }
+      },
+      (error) => {
+        console.error('Firestore onSnapshot subscription error:', error);
+        setSyncStatus('error');
+      }
+    );
+
+    return () => unsubscribe();
+  }, [syncToFirestore]);
+
+  // Combined state updater that mutates locally and syncs to Firestore
+  const updateDataAndSync = useCallback((updater) => {
+    setData((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch (e) {
+        console.error('Failed to save to localStorage', e);
+      }
+      syncToFirestore(next);
+      return next;
+    });
+  }, [syncToFirestore]);
 
   // Auth handler
   const loginAdmin = (password) => {
@@ -93,24 +190,42 @@ export function DataProvider({ children }) {
       id: Date.now(),
       status: newProject.status || 'Live Production'
     };
-    setData((prev) => ({
-      ...prev,
-      portfolio: [projectWithId, ...prev.portfolio]
-    }));
+    updateDataAndSync((prev) => {
+      const newPortfolio = [projectWithId, ...prev.portfolio];
+      const updatedStats = prev.stats?.map((s) =>
+        s.id === 'stat-1' || s.label?.toLowerCase().includes('proyek')
+          ? { ...s, value: String(newPortfolio.length) }
+          : s
+      );
+      return {
+        ...prev,
+        portfolio: newPortfolio,
+        stats: updatedStats
+      };
+    });
   };
 
   const updatePortfolio = (id, updatedProject) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       portfolio: prev.portfolio.map((p) => (p.id === id ? { ...p, ...updatedProject } : p))
     }));
   };
 
   const deletePortfolio = (id) => {
-    setData((prev) => ({
-      ...prev,
-      portfolio: prev.portfolio.filter((p) => p.id !== id)
-    }));
+    updateDataAndSync((prev) => {
+      const newPortfolio = prev.portfolio.filter((p) => p.id !== id);
+      const updatedStats = prev.stats?.map((s) =>
+        s.id === 'stat-1' || s.label?.toLowerCase().includes('proyek')
+          ? { ...s, value: String(newPortfolio.length) }
+          : s
+      );
+      return {
+        ...prev,
+        portfolio: newPortfolio,
+        stats: updatedStats
+      };
+    });
   };
 
   // --- Services CRUD ---
@@ -120,21 +235,21 @@ export function DataProvider({ children }) {
       id: newService.id || `service-${Date.now()}`,
       icon: newService.icon || 'Code2'
     };
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       services: [...prev.services, serviceWithId]
     }));
   };
 
   const updateService = (id, updatedService) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       services: prev.services.map((s) => (s.id === id ? { ...s, ...updatedService } : s))
     }));
   };
 
   const deleteService = (id) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       services: prev.services.filter((s) => s.id !== id)
     }));
@@ -142,7 +257,7 @@ export function DataProvider({ children }) {
 
   // --- About Us & Values & Workflow CRUD ---
   const updateAboutStory = (aboutStory, aboutVision) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -157,7 +272,7 @@ export function DataProvider({ children }) {
       ...newValue,
       id: newValue.id || `val-${Date.now()}`
     };
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -167,7 +282,7 @@ export function DataProvider({ children }) {
   };
 
   const updateValuePillar = (id, updatedValue) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -177,7 +292,7 @@ export function DataProvider({ children }) {
   };
 
   const deleteValuePillar = (id) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -191,7 +306,7 @@ export function DataProvider({ children }) {
       ...newStep,
       id: newStep.id || `wf-${Date.now()}`
     };
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -201,7 +316,7 @@ export function DataProvider({ children }) {
   };
 
   const updateWorkflowStep = (id, updatedStep) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -211,7 +326,7 @@ export function DataProvider({ children }) {
   };
 
   const deleteWorkflowStep = (id) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       about: {
         ...prev.about,
@@ -226,21 +341,21 @@ export function DataProvider({ children }) {
       ...newFaq,
       id: newFaq.id || `faq-${Date.now()}`
     };
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       faqs: [...prev.faqs, faqWithId]
     }));
   };
 
   const updateFaq = (id, updatedFaq) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       faqs: prev.faqs.map((f) => (f.id === id || f.q === id ? { ...f, ...updatedFaq } : f))
     }));
   };
 
   const deleteFaq = (id) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       faqs: prev.faqs.filter((f) => f.id !== id && f.q !== id)
     }));
@@ -248,14 +363,14 @@ export function DataProvider({ children }) {
 
   // --- Stats CRUD & General Settings ---
   const updateStats = (statsArray) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       stats: statsArray
     }));
   };
 
   const updateGeneralSettings = (newSettings) => {
-    setData((prev) => ({
+    updateDataAndSync((prev) => ({
       ...prev,
       ...newSettings
     }));
@@ -263,16 +378,23 @@ export function DataProvider({ children }) {
 
   // Reset to default factory data
   const resetToDefault = () => {
-    setData(initialCompanyData);
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('verity_studio_data_v2');
     localStorage.removeItem('verity_studio_data_v1');
+    updateDataAndSync(initialCompanyData);
+  };
+
+  // Force sync manually
+  const forceSync = () => {
+    return syncToFirestore(data);
   };
 
   return (
     <DataContext.Provider
       value={{
         data,
+        syncStatus,
+        forceSync,
         isAdminOpen,
         setIsAdminOpen,
         isAuthenticated,
@@ -316,5 +438,3 @@ export function useData() {
   }
   return context;
 }
-
-

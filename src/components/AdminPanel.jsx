@@ -10,6 +10,8 @@ import { useData } from '../context/DataContext';
 export default function AdminPanel() {
   const {
     data,
+    syncStatus,
+    forceSync,
     isAdminOpen,
     setIsAdminOpen,
     isAuthenticated,
@@ -317,9 +319,9 @@ export default function AdminPanel() {
   const [settingsForm, setSettingsForm] = useState({
     name: data.name || '',
     tagline: data.tagline || '',
-    heroHeadline1: data.heroHeadline1 || 'Jasa Pembuatan',
-    heroHeadlineHighlight1: data.heroHeadlineHighlight1 || 'Website & Aplikasi Web',
-    heroHeadlineHighlight2: data.heroHeadlineHighlight2 || 'Modern & Berperforma Tinggi',
+    heroHeadline1: data.heroHeadline1 || 'Butuh Website?',
+    heroHeadlineHighlight1: data.heroHeadlineHighlight1 || 'Butuh Aplikasi?',
+    heroHeadlineHighlight2: data.heroHeadlineHighlight2 || 'Gass Bareng Kitaa Ajaa!',
     subHeadline: data.subHeadline || '',
     trustHighlights: Array.isArray(data.trustHighlights) ? data.trustHighlights.join('\n') : '',
     whatsappNumber: data.whatsappNumber || '',
@@ -403,9 +405,41 @@ export default function AdminPanel() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Live Firebase Cloud Sync Status */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] font-mono">
+              {syncStatus === 'saving' && (
+                <span className="flex items-center gap-1.5 text-amber-400">
+                  <RefreshCw className="w-3 h-3 animate-spin text-amber-400" />
+                  <span className="hidden sm:inline">Menyimpan...</span>
+                </span>
+              )}
+              {syncStatus === 'synced' && (
+                <span className="flex items-center gap-1.5 text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="hidden sm:inline">Firebase Cloud Synced</span>
+                </span>
+              )}
+              {syncStatus === 'error' && (
+                <button
+                  onClick={() => forceSync?.()}
+                  className="flex items-center gap-1.5 text-rose-400 hover:text-rose-300 cursor-pointer"
+                  title="Klik untuk coba sinkron ulang"
+                >
+                  <AlertTriangle className="w-3 h-3 text-rose-400" />
+                  <span className="hidden sm:inline">Sinkron Ulang</span>
+                </button>
+              )}
+              {syncStatus === 'connecting' && (
+                <span className="flex items-center gap-1.5 text-sky-400">
+                  <RefreshCw className="w-3 h-3 animate-spin text-sky-400" />
+                  <span className="hidden sm:inline">Menghubungkan...</span>
+                </span>
+              )}
+            </div>
+
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] font-mono text-zinc-400">
               <span className="text-zinc-500">Shortcut:</span>
-              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] font-semibold">Ctrl + `</kbd>
+              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] font-semibold">Ctrl + '</kbd>
             </div>
             {isAuthenticated && (
               <button
@@ -1490,30 +1524,30 @@ export default function AdminPanel() {
                       
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-xs font-mono text-zinc-400 uppercase mb-1">Prefix Judul</label>
+                          <label className="block text-xs font-mono text-zinc-400 uppercase mb-1">Headline 1</label>
                           <input
                             type="text"
-                            placeholder="Jasa Pembuatan"
+                            placeholder="Butuh Website?"
                             value={settingsForm.heroHeadline1}
                             onChange={(e) => setSettingsForm({ ...settingsForm, heroHeadline1: e.target.value })}
                             className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-mono text-zinc-400 uppercase mb-1">Teks Utama Putih</label>
+                          <label className="block text-xs font-mono text-zinc-400 uppercase mb-1">Headline 2</label>
                           <input
                             type="text"
-                            placeholder="Website & Aplikasi Web"
+                            placeholder="Butuh Aplikasi?"
                             value={settingsForm.heroHeadlineHighlight1}
                             onChange={(e) => setSettingsForm({ ...settingsForm, heroHeadlineHighlight1: e.target.value })}
                             className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-mono text-zinc-400 uppercase mb-1">Highlight Hijau/Teal</label>
+                          <label className="block text-xs font-mono text-zinc-400 uppercase mb-1">Headline 3</label>
                           <input
                             type="text"
-                            placeholder="Modern & Berperforma Tinggi"
+                            placeholder="Gass Bareng Kitaa Ajaa!"
                             value={settingsForm.heroHeadlineHighlight2}
                             onChange={(e) => setSettingsForm({ ...settingsForm, heroHeadlineHighlight2: e.target.value })}
                             className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:border-emerald-500 focus:outline-none"

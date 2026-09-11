@@ -10,14 +10,15 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AdminPanel from './components/AdminPanel';
 import AnimatedSection from './components/AnimatedSection';
+import BinaryArithmeticBackground from './components/BinaryArithmeticBackground';
 
 function MainContent() {
-  const { setIsAdminOpen } = useData();
+  const { isAdminOpen, setIsAdminOpen } = useData();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Shortcut Ctrl + ` (Backquote / Tilde) or Cmd + `
-      if ((e.ctrlKey || e.metaKey) && (e.key === '`' || e.key === '~' || e.code === 'Backquote')) {
+      // Shortcut Ctrl + ' (Single quote) or Cmd + '
+      if ((e.ctrlKey || e.metaKey) && (e.key === "'" || e.key === '"' || e.code === 'Quote')) {
         e.preventDefault();
         setIsAdminOpen((prev) => !prev);
       } else if (e.key === 'Escape') {
@@ -30,9 +31,10 @@ function MainContent() {
   }, [setIsAdminOpen]);
 
   return (
-    <div className="min-h-screen bg-[#f8fbff] text-slate-900 flex flex-col selection:bg-emerald-500/20 selection:text-emerald-800 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#19222c] text-slate-100 flex flex-col selection:bg-[#0073ea]/30 selection:text-white relative overflow-x-hidden">
+      {!isAdminOpen && <BinaryArithmeticBackground />}
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow relative z-10">
         <Hero />
 
         <AnimatedSection>

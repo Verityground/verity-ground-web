@@ -45,9 +45,8 @@ export default function BinaryArithmeticBackground() {
     let floatingFormulas = [];
 
     const initCanvasSize = () => {
-      const parent = canvas.parentElement;
-      width = parent ? parent.offsetWidth : window.innerWidth;
-      height = parent ? parent.offsetHeight : window.innerHeight;
+      width = window.innerWidth;
+      height = window.innerHeight;
       dpr = window.devicePixelRatio || 1;
 
       canvas.width = width * dpr;
@@ -71,8 +70,8 @@ export default function BinaryArithmeticBackground() {
           length,
           chars: Array.from({ length: 30 }, () => getRandChar()),
           depth, // 0 to 1
-          opacity: 0.12 + Math.random() * 0.45,
-          colorTheme: Math.random() > 0.8 ? 'cyan' : 'emerald',
+          opacity: 0.15 + Math.random() * 0.5,
+          colorTheme: Math.random() > 0.4 ? 'brandBlue' : 'electricCyan',
           mutationFreq: 0.02 + Math.random() * 0.04
         });
       }
@@ -113,8 +112,8 @@ export default function BinaryArithmeticBackground() {
     window.addEventListener('mouseleave', handleMouseLeave);
 
     const render = () => {
-      // Clear with trail fade on light bluish-white
-      ctx.fillStyle = 'rgba(248, 251, 255, 0.32)';
+      // Clear with trail fade on dark #19222c
+      ctx.fillStyle = 'rgba(25, 34, 44, 0.28)';
       ctx.fillRect(0, 0, width, height);
 
       ctx.font = `bold ${fontSize}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`;
@@ -143,20 +142,21 @@ export default function BinaryArithmeticBackground() {
           const isSecond = j === 1;
 
           if (isHead) {
-            // Bright high-contrast leading character for light mode
-            ctx.fillStyle = drop.colorTheme === 'cyan' ? '#0284c7' : '#059669';
-            ctx.shadowColor = drop.colorTheme === 'cyan' ? '#38bdf8' : '#34d399';
-            ctx.shadowBlur = 6;
+            // Bright white leading character with #0073ea electric glow
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#0073ea';
+            ctx.shadowBlur = 10;
           } else if (isSecond) {
-            ctx.fillStyle = drop.colorTheme === 'cyan' ? '#0369a1' : '#047857';
-            ctx.shadowBlur = 3;
+            ctx.fillStyle = '#38bdf8';
+            ctx.shadowColor = '#0073ea';
+            ctx.shadowBlur = 6;
           } else {
-            // Fading trail
+            // Fading trail in brand #0073ea and electric sky
             const trailRatio = 1 - j / drop.length;
-            const alpha = (drop.opacity + mouseBoost) * trailRatio * 0.7;
-            ctx.fillStyle = drop.colorTheme === 'cyan'
-              ? `rgba(2, 132, 199, ${Math.min(alpha, 0.65)})`
-              : `rgba(5, 150, 105, ${Math.min(alpha, 0.65)})`;
+            const alpha = (drop.opacity + mouseBoost) * trailRatio;
+            ctx.fillStyle = drop.colorTheme === 'brandBlue'
+              ? `rgba(0, 115, 234, ${Math.min(alpha * 0.9, 0.85)})`
+              : `rgba(56, 189, 248, ${Math.min(alpha * 0.75, 0.7)})`;
             ctx.shadowBlur = 0;
           }
 
@@ -188,7 +188,7 @@ export default function BinaryArithmeticBackground() {
         if (formula.y < -40) formula.y = height + 30;
         if (formula.y > height + 40) formula.y = -30;
 
-        ctx.fillStyle = `rgba(14, 116, 144, ${formula.baseAlpha * 1.5})`;
+        ctx.fillStyle = `rgba(0, 115, 234, ${formula.baseAlpha * 1.8})`;
         ctx.fillText(formula.text, formula.x, formula.y);
       });
 
@@ -206,14 +206,13 @@ export default function BinaryArithmeticBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
+    <div className="fixed inset-0 pointer-events-none select-none overflow-hidden z-0">
       <canvas
         ref={canvasRef}
-        className="w-full h-full block opacity-60 mix-blend-multiply"
+        className="w-full h-full block opacity-80"
       />
-      {/* Vignette & Radial Glow masks for light bluish-white theme */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#f8fbff]/85 via-transparent to-[#f8fbff] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_65%_55%_at_50%_40%,transparent_0%,rgba(248,251,255,0.9)_100%)] pointer-events-none" />
+      {/* Soft radial glow mask for pleasant edge softening on #19222c */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,transparent_45%,rgba(25,34,44,0.75)_100%)] pointer-events-none" />
     </div>
   );
 }

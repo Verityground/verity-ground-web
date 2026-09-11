@@ -1,10 +1,10 @@
 export const companyData = {
   name: "Verity Ground",
   tagline: "Modern Software Studio & High-Performance Web Development Agency",
-  heroHeadline1: "Jasa Pembuatan",
-  heroHeadlineHighlight1: "Website & Aplikasi Web",
-  heroHeadlineHighlight2: "Modern & Berperforma Tinggi",
-  subHeadline: "Membantu bisnis, startup, dan enterprise membangun website cepat, web app skalabel, dan sistem kustom dengan standar engineering kelas dunia.",
+  heroHeadline1: "Butuh Website?",
+  heroHeadlineHighlight1: "Butuh Aplikasi?",
+  heroHeadlineHighlight2: "Gass Bareng Kitaa Ajaa!",
+  subHeadline: "Membantu bisnis, startup, dan enterprise untuk membangun website cepat, aplikasi web skalabel, dan sistem kustom dengan standar engineering terbaik.",
   whatsappNumber: "6285693131477",
   whatsappMessage: "Halo Verity Ground, saya tertarik untuk konsultasi pembuatan proyek website/aplikasi.",
   email: "verityground@gmail.com",
@@ -18,13 +18,68 @@ export const companyData = {
   ],
 
   stats: [
-    { id: "stat-1", value: "0", label: "Proyek Selesai", desc: "Produk web & app live" },
-    { id: "stat-2", value: "100%", label: "Client Satisfaction", desc: "Klien repeat & referral" },
-    { id: "stat-3", value: "< 1.2s", label: "Page Load Speed", desc: "Performa skor 95+ Lighthouse" },
+    { id: "stat-1", value: "3", label: "Proyek Selesai", desc: "Produk web & app live" },
     { id: "stat-4", value: "24/7", label: "Monitoring & Support", desc: "Garansi pasca-peluncuran" },
   ],
 
-  services: [],
+  services: [
+    {
+      id: "srv-1",
+      title: "Website & Landing Page Berperforma Tinggi",
+      icon: "LayoutTemplate",
+      badge: "Populer",
+      shortDesc: "Website representatif, ultra-cepat, dan modern untuk meningkatkan kredibilitas brand, konversi leads, dan visibilitas di mesin pencari.",
+      features: [
+        "Skor Kecepatan Lighthouse 95+ (<1.2s)",
+        "Desain UI/UX Eksklusif & Responsif",
+        "Optimasi SEO & Core Web Vitals",
+        "Integrasi WhatsApp Chat & Google Analytics"
+      ],
+      techStack: ["React", "Vite", "Tailwind CSS", "Next.js"]
+    },
+    {
+      id: "srv-2",
+      title: "Web Application & Platform SaaS",
+      icon: "Code2",
+      badge: "Enterprise",
+      shortDesc: "Aplikasi web interaktif dengan arsitektur scalable, autentikasi aman, real-time sync, serta integrasi payment gateway dan pihak ketiga.",
+      features: [
+        "Arsitektur Modular, Clean Code & Scalable",
+        "Dashboard Interaktif & Manajemen Data",
+        "Autentikasi Multi-role & Proteksi Ketat",
+        "Integrasi API & Payment Gateway"
+      ],
+      techStack: ["React 19", "Node.js", "TypeScript", "PostgreSQL"]
+    },
+    {
+      id: "srv-3",
+      title: "Sistem Kustom, ERP & Internal Tools",
+      icon: "Cpu",
+      badge: "Bespoke",
+      shortDesc: "Otomasi sistem operasional perusahaan Anda melalui portal internal, manajemen inventaris, dan dashboard analitik terpadu.",
+      features: [
+        "Otomasi Alur Kerja & Laporan Otomatis",
+        "Struktur Database Kokoh & Terenkripsi",
+        "Manajemen Hak Akses Karyawan & Audit Log",
+        "Export Laporan Excel/PDF & Backup Otomatis"
+      ],
+      techStack: ["PostgreSQL", "REST API", "Docker", "Cloud Storage"]
+    },
+    {
+      id: "srv-4",
+      title: "Optimasi, Audit & Dedicated Maintenance",
+      icon: "Wrench",
+      badge: "Maintenance",
+      shortDesc: "Peningkatan performa web yang lambat, audit keamanan, refactoring kode legacy, serta pendampingan teknis berkala.",
+      features: [
+        "Audit Kecepatan & Pembersihan Bug",
+        "Refactoring Kode & Peningkatan Skalabilitas",
+        "Monitoring Server & Uptime Berkala",
+        "Garansi & Dukungan Teknis Langsung"
+      ],
+      techStack: ["DevOps", "Lighthouse", "Security Audit", "CI/CD"]
+    }
+  ],
 
   about: {
     story: "Verity Ground adalah software studio independen yang berdedikasi membangun produk digital tanpa kompromi kualitas. Kami menggabungkan clean code, arsitektur modern, dan desain visual menawan untuk menciptakan produk yang tangguh dan skalabel.",

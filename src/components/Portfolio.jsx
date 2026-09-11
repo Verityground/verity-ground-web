@@ -57,19 +57,19 @@ function ProjectCard({ project, onSelect }) {
       style={{ willChange: 'transform' }}
     >
       <div
-        className="relative rounded-3xl bg-white/90 border border-slate-200/90 overflow-hidden shadow-sm flex flex-col justify-between transition-all duration-300 ease-out preserve-3d"
+        className="relative rounded-3xl bg-[#19222c]/90 border border-slate-700/60 overflow-hidden shadow-lg flex flex-col justify-between transition-all duration-300 ease-out preserve-3d"
         style={{
           transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(${isHovered ? 1.02 : 1}, ${isHovered ? 1.02 : 1}, 1)`,
           boxShadow: isHovered
-            ? '0 25px 50px -12px rgba(15, 23, 42, 0.15), 0 0 24px -2px rgba(16, 185, 129, 0.18)'
-            : '0 4px 20px -2px rgba(15, 23, 42, 0.04)'
+            ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 24px -2px rgba(0, 115, 234, 0.25)'
+            : '0 4px 20px -2px rgba(0, 0, 0, 0.3)'
         }}
       >
         {/* Dynamic Light Sheen / Spotlight Glare Effect */}
         <div
           className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300 rounded-3xl"
           style={{
-            background: `radial-gradient(circle 280px at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.7), transparent 80%)`,
+            background: `radial-gradient(circle 280px at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.12), transparent 80%)`,
             opacity: glare.opacity
           }}
         />
@@ -78,7 +78,7 @@ function ProjectCard({ project, onSelect }) {
         <div
           className="pointer-events-none absolute -inset-[1px] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
           style={{
-            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(14, 165, 233, 0.3), transparent 70%)',
+            background: 'linear-gradient(135deg, rgba(0, 115, 234, 0.5), rgba(56, 189, 248, 0.35), transparent 70%)',
             mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
             maskComposite: 'exclude',
             WebkitMaskComposite: 'xor',
@@ -106,8 +106,8 @@ function ProjectCard({ project, onSelect }) {
             <span className="px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-[11px] font-mono text-white font-medium shadow-sm">
               {project.category}
             </span>
-            <span className="px-3 py-1 rounded-full bg-emerald-950/80 backdrop-blur-md border border-emerald-500/40 text-[10px] font-mono text-emerald-300 font-semibold flex items-center gap-1.5 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="px-3 py-1 rounded-full bg-[#0073ea]/20 backdrop-blur-md border border-[#0073ea]/40 text-[10px] font-mono text-[#0073ea] font-semibold flex items-center gap-1.5 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0073ea] animate-pulse" />
               {project.status || 'Live'}
             </span>
           </div>
@@ -118,8 +118,8 @@ function ProjectCard({ project, onSelect }) {
               className="absolute bottom-3.5 left-3.5 right-3.5 z-20 transition-transform duration-300"
               style={{ transform: isHovered ? 'translateZ(30px)' : 'translateZ(0px)' }}
             >
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-white bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 shadow-md">
-                <Sparkles className="w-3 h-3 text-emerald-400" />
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-white bg-[#19222c]/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 shadow-md">
+                <Sparkles className="w-3 h-3 text-[#0073ea]" />
                 <span>{project.metrics}</span>
               </span>
             </div>
@@ -127,18 +127,18 @@ function ProjectCard({ project, onSelect }) {
         </div>
 
         {/* Card Body Content */}
-        <div className="p-6 flex flex-col flex-grow justify-between bg-white relative z-10">
+        <div className="p-6 flex flex-col flex-grow justify-between bg-[#19222c]/95 border-t border-slate-800/80 relative z-10">
           <div>
-            <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-1.5">
+            <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-1.5">
               <span>{project.client ? `Klien: ${project.client}` : 'Showcase Study'}</span>
-              <span className="text-[10px] uppercase tracking-wider text-emerald-600 font-semibold">Verified</span>
+              <span className="text-[10px] uppercase tracking-wider text-[#0073ea] font-semibold">Verified</span>
             </div>
 
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors duration-200 line-clamp-1 mb-2">
+            <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#0073ea] transition-colors duration-200 line-clamp-1 mb-2">
               {project.title}
             </h3>
 
-            <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed mb-5">
+            <p className="text-xs sm:text-sm text-slate-400 line-clamp-2 leading-relaxed mb-5">
               {project.shortDesc}
             </p>
 
@@ -147,7 +147,7 @@ function ProjectCard({ project, onSelect }) {
               {project.tech?.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="text-[10px] font-mono px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200/80 group-hover:border-emerald-200 group-hover:bg-emerald-50/40 transition-colors"
+                  className="text-[10px] font-mono px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 group-hover:border-[#0073ea]/40 group-hover:bg-[#0073ea]/15 transition-colors"
                 >
                   {tag}
                 </span>
@@ -156,10 +156,10 @@ function ProjectCard({ project, onSelect }) {
           </div>
 
           {/* Action Row */}
-          <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
+          <div className="pt-4 border-t border-slate-800 flex items-center gap-3">
             <button
               onClick={() => onSelect(project)}
-              className="flex-1 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white text-xs font-semibold border border-slate-200/80 transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              className="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-semibold border border-slate-700 transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
             >
               <Eye className="w-3.5 h-3.5" />
               <span>Detail Proyek</span>
@@ -169,7 +169,7 @@ function ProjectCard({ project, onSelect }) {
               href={project.demoUrl || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/80 hover:border-emerald-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 shadow-xs group/btn cursor-pointer"
+              className="py-2.5 px-4 rounded-xl bg-[#0073ea]/15 hover:bg-[#0073ea] text-[#0073ea] hover:text-white border border-[#0073ea]/30 hover:border-[#0073ea] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 shadow-xs group/btn cursor-pointer"
             >
               <span>Live Demo</span>
               <ArrowUpRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
@@ -196,24 +196,24 @@ export default function Portfolio() {
   return (
     <section
       id="portfolio"
-      className="py-24 bg-[#f8fbff] border-t border-slate-200/80 relative overflow-hidden select-none sm:select-auto"
+      className="py-24 bg-transparent border-t border-slate-800/80 relative overflow-hidden select-none sm:select-auto"
     >
       {/* Subtle Background Glow Orbs */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-sky-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#0073ea]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-700 mb-3.5 shadow-xs">
-            <Layers className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="tracking-wide font-semibold">PORTFOLIO & CASE STUDIES</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0073ea]/15 border border-[#0073ea]/30 text-xs font-mono text-[#0073ea] mb-3.5 shadow-xs">
+            <Layers className="w-3.5 h-3.5 text-[#0073ea]" />
+            <span className="tracking-wide font-semibold">FEATURED WORK & CASE STUDIES</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
             Karya & Produk Digital Unggulan
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base mt-4 leading-relaxed">
+          <p className="text-slate-300 text-sm sm:text-base mt-4 leading-relaxed">
             Eksplorasi website, web application berskala besar, dan sistem kustom yang kami bangun dengan standar engineering kelas dunia dan estetika interaktif modern.
           </p>
         </div>
@@ -227,8 +227,8 @@ export default function Portfolio() {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
                   activeCategory === cat
-                    ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-600/25 scale-105'
-                    : 'bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-50 border border-slate-200 shadow-xs'
+                    ? 'bg-[#0073ea] text-white font-semibold shadow-md shadow-[#0073ea]/30 scale-105'
+                    : 'bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800 shadow-xs'
                 }`}
               >
                 {cat === 'All' ? 'Semua Kategori' : cat}
@@ -240,12 +240,12 @@ export default function Portfolio() {
         {/* Empty State Fallback */}
         {(!filteredProjects || filteredProjects.length === 0) && (
           <div className="text-center py-20 px-4 max-w-md mx-auto glass-panel rounded-3xl space-y-4">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mx-auto">
+            <div className="w-14 h-14 rounded-2xl bg-[#0073ea]/15 border border-[#0073ea]/30 flex items-center justify-center text-[#0073ea] mx-auto">
               <Layers className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Portofolio Segera Hadir</h3>
-              <p className="text-xs text-slate-600 mt-1">
+              <h3 className="text-lg font-bold text-white">Proyek Segera Hadir</h3>
+              <p className="text-xs text-slate-400 mt-1">
                 Karya dan studi kasus proyek pilihan kami sedang dalam tahap kurasi dan rilis.
               </p>
             </div>
@@ -267,26 +267,26 @@ export default function Portfolio() {
 
       {/* Project Detail Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#19222c] border border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl text-slate-100">
             <button
               onClick={() => setSelectedProject(null)}
-              className="absolute top-5 right-5 p-2.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 border border-slate-200 transition-colors cursor-pointer"
+              className="absolute top-5 right-5 p-2.5 rounded-full bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition-colors cursor-pointer"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="space-y-6">
-              <div className="rounded-2xl overflow-hidden border border-slate-200 h-64 w-full bg-slate-900 relative">
+              <div className="rounded-2xl overflow-hidden border border-slate-800 h-64 w-full bg-slate-900 relative">
                 <img
                   src={selectedProject.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop'}
                   alt={selectedProject.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#19222c]/90 to-transparent" />
                 <div className="absolute bottom-4 left-4">
-                  <span className="px-3 py-1 rounded-full bg-slate-900/90 text-white text-xs font-mono border border-white/20">
+                  <span className="px-3 py-1 rounded-full bg-[#19222c]/90 text-white text-xs font-mono border border-slate-700">
                     {selectedProject.category}
                   </span>
                 </div>
@@ -294,33 +294,33 @@ export default function Portfolio() {
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-mono text-emerald-700 font-semibold">{selectedProject.client || 'Partner'}</span>
-                  <span className="text-xs font-mono text-slate-400">•</span>
-                  <span className="text-xs font-mono text-slate-500">{selectedProject.status || 'Live Production'}</span>
+                  <span className="text-xs font-mono text-[#0073ea] font-semibold">{selectedProject.client || 'Partner'}</span>
+                  <span className="text-xs font-mono text-slate-500">•</span>
+                  <span className="text-xs font-mono text-slate-400">{selectedProject.status || 'Live Production'}</span>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900">{selectedProject.title}</h3>
-                <p className="text-sm text-slate-600 mt-3 leading-relaxed">
+                <h3 className="text-2xl sm:text-3xl font-bold text-white">{selectedProject.title}</h3>
+                <p className="text-sm text-slate-300 mt-3 leading-relaxed">
                   {selectedProject.shortDesc}
                 </p>
               </div>
 
               {selectedProject.metrics && (
-                <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 space-y-1.5">
-                  <div className="text-xs font-mono uppercase text-emerald-800 font-semibold tracking-wider">Pencapaian & Dampak:</div>
-                  <div className="text-sm text-emerald-900 font-semibold flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="p-4 rounded-2xl bg-[#0073ea]/15 border border-[#0073ea]/30 space-y-1.5">
+                  <div className="text-xs font-mono uppercase text-[#0073ea] font-semibold tracking-wider">Pencapaian & Dampak:</div>
+                  <div className="text-sm text-white font-semibold flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#0073ea] shrink-0" />
                     <span>{selectedProject.metrics}</span>
                   </div>
                 </div>
               )}
 
               <div>
-                <div className="text-xs font-mono uppercase text-slate-500 mb-2.5 font-semibold tracking-wider">Teknologi & Stack Digunakan:</div>
+                <div className="text-xs font-mono uppercase text-slate-400 mb-2.5 font-semibold tracking-wider">Teknologi & Stack Digunakan:</div>
                 <div className="flex flex-wrap gap-2">
                   {selectedProject.tech?.map((t, idx) => (
                     <span
                       key={idx}
-                      className="text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-100 text-slate-800 border border-slate-200/90"
+                      className="text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700"
                     >
                       {t}
                     </span>
@@ -328,10 +328,10 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              <div className="pt-5 border-t border-slate-200 flex items-center justify-end gap-3">
+              <div className="pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-950 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white cursor-pointer"
                 >
                   Tutup
                 </button>
@@ -339,7 +339,7 @@ export default function Portfolio() {
                   href={selectedProject.demoUrl || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold text-xs flex items-center gap-2 hover:bg-emerald-500 transition-colors shadow-md shadow-emerald-600/20 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#0073ea] text-white font-semibold text-xs flex items-center gap-2 hover:bg-[#0060c4] transition-colors shadow-md shadow-[#0073ea]/25 cursor-pointer"
                 >
                   <span>Kunjungi Live URL</span>
                   <ArrowUpRight className="w-4 h-4" />

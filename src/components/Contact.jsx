@@ -34,19 +34,19 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-[#f8fbff] border-t border-slate-200/80 relative">
+    <section id="contact" className="py-20 bg-transparent border-t border-slate-800/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-700 mb-3 shadow-xs">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0073ea]/15 border border-[#0073ea]/35 text-xs font-mono text-[#0073ea] mb-3 shadow-xs">
             <MessageCircle className="w-3.5 h-3.5" />
             <span>START A CONVERSATION</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
             Siap Mewujudkan Ide Digital Anda?
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base mt-4">
+          <p className="text-slate-300 text-sm sm:text-base mt-4">
             Konsultasikan kebutuhan website atau sistem aplikasi Anda secara gratis. Kami siap memberikan masukan arsitektur teknis dan estimasi yang transparan.
           </p>
         </div>
@@ -57,36 +57,41 @@ export default function Contact() {
           {/* Form Box (7 cols) */}
           <div className="lg:col-span-7 glass-panel p-6 sm:p-8 rounded-3xl shadow-sm relative">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900">Formulir Konsultasi Singkat</h3>
-              <p className="text-xs sm:text-sm text-slate-600 mt-1">
+              <h3 className="text-xl font-bold text-white">Formulir Konsultasi Singkat</h3>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1">
                 Isi detail berikut dan kami akan langsung membuka chat WhatsApp dengan rangkuman rapi.
               </p>
             </div>
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-mono text-slate-700 mb-1.5 uppercase font-medium">
+                <label htmlFor="client-name" className="block text-xs font-mono text-slate-300 mb-1.5 uppercase font-medium">
                   Nama Anda / Perusahaan *
                 </label>
                 <input
+                  id="client-name"
+                  name="name"
                   type="text"
                   required
+                  autoComplete="name"
                   placeholder="Contoh: Budi Pratama (PT Maju Jaya)"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-colors shadow-xs"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/20 transition-colors shadow-xs"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-mono text-slate-700 mb-1.5 uppercase font-medium">
+                  <label htmlFor="service-type" className="block text-xs font-mono text-slate-300 mb-1.5 uppercase font-medium">
                     Jenis Layanan
                   </label>
                   <select
+                    id="service-type"
+                    name="serviceType"
                     value={formData.serviceType}
                     onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-colors shadow-xs"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/20 transition-colors shadow-xs [&>option]:bg-[#19222c] [&>option]:text-white cursor-pointer"
                   >
                     {data.services && data.services.length > 0 ? (
                       data.services.map((s) => (
@@ -104,13 +109,15 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-slate-700 mb-1.5 uppercase font-medium">
+                  <label htmlFor="budget-range" className="block text-xs font-mono text-slate-300 mb-1.5 uppercase font-medium">
                     Perkiraan Budget
                   </label>
                   <select
+                    id="budget-range"
+                    name="budgetRange"
                     value={formData.budgetRange}
                     onChange={(e) => setFormData({ ...formData, budgetRange: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-colors shadow-xs"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/20 transition-colors shadow-xs [&>option]:bg-[#19222c] [&>option]:text-white cursor-pointer"
                   >
                     <option value="< Rp 5 Juta">&lt; Rp 5 Juta (Landing Page Simpel)</option>
                     <option value="Rp 5jt - 15jt">Rp 5 Juta - 15 Juta</option>
@@ -121,13 +128,15 @@ export default function Contact() {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-slate-700 mb-1.5 uppercase font-medium">
+                <label htmlFor="target-timeline" className="block text-xs font-mono text-slate-300 mb-1.5 uppercase font-medium">
                   Target Deadline
                 </label>
                 <select
+                  id="target-timeline"
+                  name="timeline"
                   value={formData.timeline}
                   onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-colors shadow-xs"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/20 transition-colors shadow-xs [&>option]:bg-[#19222c] [&>option]:text-white cursor-pointer"
                 >
                   <option value="Sangat Mendesak (< 2 Minggu)">Sangat Mendesak (&lt; 2 Minggu)</option>
                   <option value="1 Bulan">1 Bulan</option>
@@ -137,21 +146,23 @@ export default function Contact() {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-slate-700 mb-1.5 uppercase font-medium">
+                <label htmlFor="project-notes" className="block text-xs font-mono text-slate-300 mb-1.5 uppercase font-medium">
                   Deskripsi Kebutuhan Singkat (Opsional)
                 </label>
                 <textarea
+                  id="project-notes"
+                  name="notes"
                   rows="3"
                   placeholder="Ceritakan gambaran fitur utama atau referensi website yang Anda sukai..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-colors resize-none shadow-xs"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/20 transition-colors resize-none shadow-xs"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 cursor-pointer"
+                className="w-full py-3.5 px-6 rounded-xl bg-[#0073ea] hover:bg-[#0060c4] text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-md shadow-[#0073ea]/25 hover:shadow-[#0073ea]/40 cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 fill-current" />
                 <span>Kirim & Mulai Konsultasi via WhatsApp</span>
@@ -164,20 +175,20 @@ export default function Contact() {
             
             {/* Quick Contact Cards */}
             <div className="glass-panel p-6 rounded-3xl space-y-4 shadow-sm">
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Kontak Langsung Studio</h3>
+              <h3 className="text-lg font-bold text-white mb-2">Kontak Langsung Studio</h3>
               
               <a
                 href={`https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(data.whatsappMessage || 'Halo Verity Ground')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-emerald-300 transition-colors group"
+                className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/70 hover:bg-slate-800 border border-slate-800 hover:border-[#0073ea]/40 transition-colors group"
               >
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-[#0073ea]/15 text-[#0073ea] flex items-center justify-center shrink-0">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-[11px] font-mono text-slate-500">WhatsApp Resmi</div>
-                  <div className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                  <div className="text-[11px] font-mono text-slate-400">WhatsApp Resmi</div>
+                  <div className="text-sm font-bold text-white group-hover:text-[#0073ea] transition-colors">
                     +{data.whatsappNumber}
                   </div>
                 </div>
@@ -185,29 +196,32 @@ export default function Contact() {
 
               <div
                 onClick={handleCopyEmail}
-                className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-blue-300 transition-colors cursor-pointer group"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCopyEmail(); }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/70 hover:bg-slate-800 border border-slate-800 hover:border-[#0073ea]/40 transition-colors cursor-pointer group"
               >
-                <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-[#0073ea]/15 text-[#0073ea] flex items-center justify-center shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-[11px] font-mono text-slate-500">Email Inquiry</div>
-                  <div className="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
+                  <div className="text-[11px] font-mono text-slate-400">Email Inquiry</div>
+                  <div className="text-sm font-bold text-white group-hover:text-[#0073ea] transition-colors">
                     {data.email}
                   </div>
                 </div>
-                <span className="text-[11px] font-mono text-slate-500">
+                <span className="text-[11px] font-mono text-slate-400">
                   {copiedEmail ? 'Tersalin!' : 'Klik Salin'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <div className="w-10 h-10 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+                <div className="w-10 h-10 rounded-lg bg-[#0073ea]/15 text-[#0073ea] flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-mono text-slate-500">Lokasi Tim</div>
-                  <div className="text-sm font-bold text-slate-900">
+                  <div className="text-[11px] font-mono text-slate-400">Lokasi Tim</div>
+                  <div className="text-sm font-bold text-white">
                     {data.location}
                   </div>
                 </div>
@@ -217,28 +231,28 @@ export default function Contact() {
             {/* FAQs Accordion */}
             <div className="glass-panel p-6 rounded-3xl space-y-3 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
-                <HelpCircle className="w-4 h-4 text-emerald-600" />
-                <h4 className="text-sm font-bold text-slate-900 uppercase font-mono tracking-wider">
+                <HelpCircle className="w-4 h-4 text-[#0073ea]" />
+                <h4 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
                   Frequently Asked Questions
                 </h4>
               </div>
 
               <div className="space-y-2">
                 {data.faqs?.map((faq, idx) => (
-                  <div key={idx} className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/70">
+                  <div key={idx} className="border border-slate-800 rounded-xl overflow-hidden bg-slate-900/60">
                     <button
                       onClick={() => toggleFaq(idx)}
-                      className="w-full p-3.5 text-left flex items-center justify-between text-xs sm:text-sm font-semibold text-slate-800 hover:text-slate-950 transition-colors cursor-pointer"
+                      className="w-full p-3.5 text-left flex items-center justify-between text-xs sm:text-sm font-semibold text-slate-200 hover:text-white transition-colors cursor-pointer"
                     >
                       <span>{faq.q}</span>
                       {faqOpen === idx ? (
-                        <ChevronUp className="w-4 h-4 text-emerald-600 shrink-0 ml-2" />
+                        <ChevronUp className="w-4 h-4 text-[#0073ea] shrink-0 ml-2" />
                       ) : (
                         <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
                       )}
                     </button>
                     {faqOpen === idx && (
-                      <div className="px-3.5 pb-3.5 text-xs text-slate-600 leading-relaxed border-t border-slate-200 pt-2.5">
+                      <div className="px-3.5 pb-3.5 text-xs text-slate-300 leading-relaxed border-t border-slate-800 pt-2.5">
                         {faq.a}
                       </div>
                     )}

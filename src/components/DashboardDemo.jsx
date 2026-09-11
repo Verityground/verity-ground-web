@@ -48,7 +48,7 @@ export default function DashboardDemo() {
   };
 
   return (
-    <section id="dashboard-demo" className="py-20 bg-[#f8fbff] border-t border-slate-200/80 relative">
+    <section id="dashboard-demo" className="py-20 bg-transparent border-t border-slate-800/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
