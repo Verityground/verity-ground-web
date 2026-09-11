@@ -57,38 +57,27 @@ export function TransitionProvider({ children }) {
         }`}
         aria-hidden="true"
       >
-        {/* Multi-staggered Curtain Columns in Clean White */}
-        <div className="absolute inset-0 flex">
-          {[0, 1, 2, 3, 4].map((colIndex) => {
-            const delay = phase === 'enter' ? colIndex * 40 : colIndex * 30;
-            return (
-              <div
-                key={colIndex}
-                className={`flex-1 bg-white border-r border-slate-100/80 noomo-curtain-strip ${
-                  phase === 'enter'
-                    ? 'scale-y-100 origin-bottom'
-                    : phase === 'exit'
-                    ? 'scale-y-0 origin-top'
-                    : 'scale-y-0 origin-bottom'
-                }`}
-                style={{
-                  transitionDelay: `${delay}ms`
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* Center Logo with Dark Blue Pulse & Soft Ambient Shadow */}
+        {/* Seamless Fullscreen White Curtain Wipe (No Seams, No Black Lines) */}
         <div
-          className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 z-10 ${
-            phase === 'enter' ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          className={`absolute inset-0 bg-white transition-transform duration-500 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+            phase === 'enter'
+              ? 'translate-y-0'
+              : phase === 'exit'
+              ? '-translate-y-full'
+              : 'translate-y-full'
+          }`}
+        />
+
+        {/* Center Logo with Dark Blue Pulse & Refined Soft Shadow */}
+        <div
+          className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-300 ${
+            phase === 'enter' ? 'opacity-100 scale-100 delay-150' : 'opacity-0 scale-95'
           }`}
         >
           <div className="relative flex items-center justify-center p-6">
-            {/* Soft ambient diffused shadow behind the logo */}
-            <div className="absolute -inset-10 rounded-full bg-slate-900/10 blur-3xl pointer-events-none -z-10" />
-            <div className="absolute -inset-4 rounded-3xl bg-[#022859]/15 blur-2xl pointer-events-none -z-10" />
+            {/* Soft, clean diffused shadow in subtle dark-blue behind the logo */}
+            <div className="absolute -inset-6 rounded-full bg-[#022859]/10 blur-2xl pointer-events-none -z-10" />
+            <div className="absolute -inset-2 rounded-2xl bg-slate-900/5 blur-md pointer-events-none -z-10" />
 
             <img
               src="/logo.png"
