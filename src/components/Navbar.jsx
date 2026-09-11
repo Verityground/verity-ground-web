@@ -71,8 +71,8 @@ export default function Navbar() {
             onClick={(e) => handleNavClick(e, '#')}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
-            <div className="w-8 h-8 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white text-xs font-bold transition-colors group-hover:border-zinc-600">
-              VG
+            <div className="w-8 h-8 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center p-1 transition-colors group-hover:border-zinc-600 shrink-0">
+              <img src="/logo.png" alt="Verity Ground" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold tracking-tight text-white">

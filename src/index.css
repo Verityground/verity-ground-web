@@ -55,3 +55,22 @@
 .animate-fade-in {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Dark blue pulsing animation for navigation transition logo */
+@keyframes darkBluePulse {
+  0%, 100% {
+    filter: drop-shadow(0 10px 25px rgba(10, 37, 64, 0.25)) drop-shadow(0 0 10px rgba(2, 40, 89, 0.2));
+    opacity: 0.92;
+    transform: scale(0.98);
+  }
+  50% {
+    filter: drop-shadow(0 20px 40px rgba(2, 40, 89, 0.7)) drop-shadow(0 0 30px rgba(0, 51, 102, 0.8));
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+.animate-darkblue-pulse {
+  animation: darkBluePulse 0.8s ease-in-out infinite;
+}
+

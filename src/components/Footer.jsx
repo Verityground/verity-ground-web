@@ -25,8 +25,8 @@ export default function Footer() {
         {/* Top Footer Row */}
         <div className="flex flex-col md:flex-row items-start justify-between gap-8 pb-8 border-b border-zinc-800/40">
           <div className="flex items-start gap-3 max-w-sm">
-            <div className="w-8 h-8 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">
-              VG
+            <div className="w-8 h-8 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center p-1 shrink-0 mt-0.5">
+              <img src="/logo.png" alt="Verity Ground" className="w-full h-full object-contain" />
             </div>
             <div>
               <span className="text-sm font-semibold text-white tracking-tight">{data.name}</span>

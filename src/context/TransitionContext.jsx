@@ -23,7 +23,7 @@ export function TransitionProvider({ children }) {
     setIsTransitioning(true);
     setPhase('enter');
 
-    // Step 1: Curtain sweeps up and covers viewport (400ms)
+    // Step 1: Curtain sweeps up and covers viewport
     setTimeout(() => {
       // Step 2: Jump/scroll behind curtain
       if (selector === '#top' || selector === '#') {
@@ -44,27 +44,27 @@ export function TransitionProvider({ children }) {
         setPhase('idle');
         setSectionLabel('');
       }, 650);
-    }, 550);
+    }, 700);
   }, [isTransitioning]);
 
   return (
     <TransitionContext.Provider value={{ navigateTo, isTransitioning, phase, sectionLabel }}>
       {children}
-      {/* Fullscreen Noomo-style Curtain Transition Overlay */}
+      {/* Fullscreen Transition Overlay */}
       <div
         className={`fixed inset-0 z-50 pointer-events-none ${
           isTransitioning ? 'pointer-events-auto' : ''
         }`}
         aria-hidden="true"
       >
-        {/* Multi-staggered Curtain Columns */}
+        {/* Multi-staggered Curtain Columns in Clean White */}
         <div className="absolute inset-0 flex">
           {[0, 1, 2, 3, 4].map((colIndex) => {
-            const delay = phase === 'enter' ? colIndex * 50 : colIndex * 40;
+            const delay = phase === 'enter' ? colIndex * 40 : colIndex * 30;
             return (
               <div
                 key={colIndex}
-                className={`flex-1 bg-[#19222c] border-r border-slate-800/60 noomo-curtain-strip ${
+                className={`flex-1 bg-white border-r border-slate-100/80 noomo-curtain-strip ${
                   phase === 'enter'
                     ? 'scale-y-100 origin-bottom'
                     : phase === 'exit'
@@ -79,20 +79,23 @@ export function TransitionProvider({ children }) {
           })}
         </div>
 
-        {/* Center Agency Headline & Indicator */}
+        {/* Center Logo with Dark Blue Pulse & Soft Ambient Shadow */}
         <div
-          className={`absolute inset-0 flex flex-col items-center justify-center text-center transition-all duration-300 z-10 ${
+          className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 z-10 ${
             phase === 'enter' ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#0073ea]/15 border border-[#0073ea]/40 text-[#0073ea] font-mono text-xs uppercase tracking-widest mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0073ea] animate-pulse" />
-            <span>VERITY GROUND • STUDIO</span>
+          <div className="relative flex items-center justify-center p-6">
+            {/* Soft ambient diffused shadow behind the logo */}
+            <div className="absolute -inset-10 rounded-full bg-slate-900/10 blur-3xl pointer-events-none -z-10" />
+            <div className="absolute -inset-4 rounded-3xl bg-[#022859]/15 blur-2xl pointer-events-none -z-10" />
+
+            <img
+              src="/logo.png"
+              alt="Verity Ground"
+              className="w-36 sm:w-48 h-auto object-contain animate-darkblue-pulse select-none"
+            />
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-mono uppercase tracking-tight">
-            {sectionLabel || 'NAVIGATING'}
-          </h2>
-          <div className="w-12 h-0.5 bg-[#0073ea] mt-4 rounded-full animate-pulse" />
         </div>
       </div>
     </TransitionContext.Provider>
