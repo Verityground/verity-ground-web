@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layers, X, ArrowUpRight, ExternalLink } from 'lucide-react';
+import { Layers, X, ArrowUpRight, ExternalLink, Lock } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
 const getTechList = (tech) => {
@@ -150,16 +150,25 @@ export default function Portfolio() {
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
 
-                  {project.demoUrl && project.demoUrl !== '#' && (
+                  {project.demoUrl && project.demoUrl.trim() !== '' && project.demoUrl.trim() !== '#' ? (
                     <a
                       href={project.demoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3.5 py-1.5 bg-white text-black hover:bg-zinc-200 text-xs font-medium rounded-md flex items-center gap-1.5 transition-colors shadow-xs"
                     >
-                      <span>Live Demo</span>
+                      <span>
+                        {project.category === 'Mobile App' || project.kategori === 'Mobile App'
+                          ? 'Lihat Aplikasi'
+                          : 'Live Demo'}
+                      </span>
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-400">
+                      <Lock className="w-3 h-3 text-zinc-500" />
+                      <span>Internal Project / Confidential</span>
+                    </span>
                   )}
                 </div>
               </div>
@@ -238,16 +247,25 @@ export default function Portfolio() {
               </div>
 
               <div className="pt-4 border-t border-zinc-800 flex justify-end gap-3">
-                {selectedProject.demoUrl && selectedProject.demoUrl !== '#' && (
+                {selectedProject.demoUrl && selectedProject.demoUrl.trim() !== '' && selectedProject.demoUrl.trim() !== '#' ? (
                   <a
                     href={selectedProject.demoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black hover:bg-zinc-200 text-xs sm:text-sm font-medium rounded-md transition-colors"
                   >
-                    <span>Kunjungi Live Demo</span>
+                    <span>
+                      {selectedProject.category === 'Mobile App' || selectedProject.kategori === 'Mobile App'
+                        ? 'Lihat Aplikasi'
+                        : 'Kunjungi Live Demo'}
+                    </span>
                     <ExternalLink className="w-4 h-4" />
                   </a>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 text-xs font-medium text-zinc-400">
+                    <Lock className="w-3.5 h-3.5 text-zinc-500" />
+                    <span>Internal Project / Confidential</span>
+                  </span>
                 )}
                 <button
                   onClick={() => setSelectedProject(null)}

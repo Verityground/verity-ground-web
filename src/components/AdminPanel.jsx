@@ -328,7 +328,7 @@ export default function AdminPanel() {
         image: projectForm.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
         shortDesc: projectForm.shortDesc,
         tech: techArray,
-        demoUrl: projectForm.demoUrl || '#',
+        demoUrl: (projectForm.demoUrl || '').trim(),
         client: projectForm.client || 'Client Partner',
         metrics: projectForm.metrics || '',
         status: projectForm.status || 'Live Production'
@@ -1180,7 +1180,7 @@ export default function AdminPanel() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-medium text-zinc-300 mb-1">URL Demo / Website</label>
+                        <label className="block text-xs font-medium text-zinc-300 mb-1">URL Demo / Store / Prototype Link</label>
                         <input
                           type="text"
                           placeholder="https://domain.com"
