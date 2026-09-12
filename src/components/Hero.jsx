@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { ArrowRight, MessageCircle, Check } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useTransition } from '../context/TransitionContext';
 
@@ -41,7 +41,6 @@ function StatCard({ stat, displayValue }) {
 export default function Hero() {
   const { data } = useData();
   const { navigateTo } = useTransition();
-  const waLink = `https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(data.whatsappMessage || 'Halo Verity Ground, saya tertarik untuk konsultasi pembuatan proyek website/aplikasi.')}`;
 
   return (
     <section className="relative pt-32 pb-20 md:pt-44 md:pb-28 overflow-hidden bg-transparent border-b border-zinc-800/40">
@@ -85,16 +84,6 @@ export default function Hero() {
             >
               <span>Explore Work</span>
               <ArrowRight className="w-4 h-4" />
-            </a>
-
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-zinc-800 text-zinc-300 px-6 py-2.5 font-medium rounded-md hover:bg-zinc-900 transition-all"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>Initiate Consultation</span>
             </a>
           </div>
 

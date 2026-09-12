@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { DataProvider, useData } from './context/DataContext';
+import React from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { DataProvider } from './context/DataContext';
 import { TransitionProvider } from './context/TransitionContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -8,31 +9,19 @@ import Services from './components/Services';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import AdminPanel from './components/AdminPanel';
 import AnimatedSection from './components/AnimatedSection';
 import BinaryArithmeticBackground from './components/BinaryArithmeticBackground';
+import Login from './components/Login';
+import StaffLogin from './components/StaffLogin';
+import Register from './components/Register';
+import AdminPanel from './components/AdminPanel';
+import ProtectedRoute from './components/ProtectedRoute';
 
-function MainContent() {
-  const { isAdminOpen, setIsAdminOpen } = useData();
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Shortcut Ctrl + ' (Single quote) or Cmd + '
-      if ((e.ctrlKey || e.metaKey) && (e.key === "'" || e.key === '"' || e.code === 'Quote')) {
-        e.preventDefault();
-        setIsAdminOpen((prev) => !prev);
-      } else if (e.key === 'Escape') {
-        setIsAdminOpen(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setIsAdminOpen]);
-
+// Public Landing Page View (Accessible to all visitors & viewers)
+function PublicLandingPage() {
   return (
     <div className="min-h-screen bg-black text-zinc-100 flex flex-col selection:bg-zinc-800 selection:text-white relative overflow-x-hidden">
-      {!isAdminOpen && <BinaryArithmeticBackground />}
+      <BinaryArithmeticBackground />
       <Navbar />
       <main className="flex-grow relative z-10">
         <Hero />
@@ -54,17 +43,72 @@ function MainContent() {
         </AnimatedSection>
       </main>
       <Footer />
-      <AdminPanel />
     </div>
   );
 }
 
+// Router View Switcher
+function AppRouter() {
+  const { currentRoute, currentUser, navigate } = useAuth();
+
+  // Shortcut key (Ctrl + ') for Super Admin & Staff quick access
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && (e.key === "'" || e.code === 'Quote')) {
+        e.preventDefault();
+
+        // If already on /admin, toggle back to home
+        if (currentRoute === '/admin') {
+          navigate('/');
+          return;
+        }
+
+        // If authenticated as superadmin or staff, jump directly to /admin
+        if (currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'staff')) {
+          navigate('/admin');
+        } else {
+          // If not logged in as admin/staff, go to staff portal
+          navigate('/staff-portal');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentRoute, currentUser, navigate]);
+
+  if (currentRoute === '/login') {
+    return <Login />;
+  }
+
+  if (currentRoute === '/staff-portal' || currentRoute === '/staff-login' || currentRoute === '/staff') {
+    return <StaffLogin />;
+  }
+
+  if (currentRoute === '/register') {
+    return <Register />;
+  }
+
+  if (currentRoute === '/admin') {
+    return (
+      <ProtectedRoute allowedRoles={['superadmin', 'staff']}>
+        <AdminPanel />
+      </ProtectedRoute>
+    );
+  }
+
+  // Default: Public Landing Page ('/' or any unmatched path)
+  return <PublicLandingPage />;
+}
+
 export default function App() {
   return (
-    <DataProvider>
-      <TransitionProvider>
-        <MainContent />
-      </TransitionProvider>
-    </DataProvider>
+    <AuthProvider>
+      <DataProvider>
+        <TransitionProvider>
+          <AppRouter />
+        </TransitionProvider>
+      </DataProvider>
+    </AuthProvider>
   );
 }

@@ -137,19 +137,192 @@ export function DataProvider({ children }) {
     }
   }, [syncToFirestore]);
 
+  const DEFAULT_USERS = [
+    {
+      id: 'usr-superadmin-1',
+      name: 'Super Admin',
+      email: 'admin@verityground.com',
+      password: 'coklatkopi21',
+      role: 'superadmin',
+      createdAt: '2026-01-01T00:00:00.000Z'
+    },
+    {
+      id: 'usr-staff-1',
+      name: 'Staff Editor',
+      email: 'staff@verityground.com',
+      password: 'bisayukbisa18',
+      role: 'staff',
+      createdAt: '2026-01-02T00:00:00.000Z'
+    },
+    {
+      id: 'usr-viewer-1',
+      name: 'Guest Viewer',
+      email: 'viewer@verityground.com',
+      password: 'viewer123',
+      role: 'viewer',
+      createdAt: '2026-01-03T00:00:00.000Z'
+    }
+  ];
+  const USERS_STORAGE_KEY = 'verity_ground_users_v1';
+
+  const [users, setUsers] = useState(() => {
+    try {
+      const saved = localStorage.getItem(USERS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((u) => {
+            if (u.role === 'superadmin') return { ...u, password: 'coklatkopi21' };
+            if (u.role === 'staff') return { ...u, password: 'bisayukbisa18' };
+            return u;
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load users from localStorage', e);
+    }
+    return DEFAULT_USERS;
+  });
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const savedUser = sessionStorage.getItem('verity_current_user');
+      if (savedUser) return JSON.parse(savedUser);
+      const isAuth = sessionStorage.getItem('verity_admin_auth') === 'true';
+      if (isAuth) {
+        return DEFAULT_USERS[0];
+      }
+    } catch (e) {
+      console.error('Failed to parse current user', e);
+    }
+    return null;
+  });
+
   // Auth handler
-  const loginAdmin = (password) => {
-    if (password === 'yukngodinglah123') {
+  const loginUser = ({ email, password }) => {
+    const trimmedPassword = (password || '').trim();
+    const normalizedEmail = (email || '').trim().toLowerCase();
+
+    // 1. Visitor / Viewer Authentication (Requires Email and Password)
+    if (normalizedEmail) {
+      const foundUser = users.find(
+        (u) => u.email.toLowerCase() === normalizedEmail && u.password === trimmedPassword
+      );
+      if (foundUser) {
+        setCurrentUser(foundUser);
+        setIsAuthenticated(true);
+        sessionStorage.setItem('verity_admin_auth', 'true');
+        sessionStorage.setItem('verity_current_user', JSON.stringify(foundUser));
+        return { success: true, user: foundUser };
+      }
+      return { success: false, error: 'Email atau password yang Anda masukkan tidak sesuai.' };
+    }
+
+    // 2. Staff & Super Admin Control Portal Authentication (Password-Only)
+    if (trimmedPassword === 'yukngodinglah123' || trimmedPassword === 'coklatkopi21') {
+      const superAdmin = users.find((u) => u.role === 'superadmin') || DEFAULT_USERS[0];
+      const userObj = { ...superAdmin, password: 'coklatkopi21' };
+      setCurrentUser(userObj);
       setIsAuthenticated(true);
       sessionStorage.setItem('verity_admin_auth', 'true');
-      return true;
+      sessionStorage.setItem('verity_current_user', JSON.stringify(userObj));
+      return { success: true, user: userObj };
     }
-    return false;
+
+    if (trimmedPassword === 'bisayukbisa18') {
+      const staff = users.find((u) => u.role === 'staff') || DEFAULT_USERS[1];
+      const userObj = { ...staff, password: 'bisayukbisa18' };
+      setCurrentUser(userObj);
+      setIsAuthenticated(true);
+      sessionStorage.setItem('verity_admin_auth', 'true');
+      sessionStorage.setItem('verity_current_user', JSON.stringify(userObj));
+      return { success: true, user: userObj };
+    }
+
+    return { success: false, error: 'Password akses tidak valid atau tidak memiliki izin.' };
+  };
+
+  const registerUser = ({ name, email, password }) => {
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    if (!normalizedEmail || !password || !name) {
+      return { success: false, error: 'Semua kolom pendaftaran wajib diisi.' };
+    }
+    const exists = users.some((u) => u.email.toLowerCase() === normalizedEmail);
+    if (exists) {
+      return { success: false, error: 'Email tersebut sudah terdaftar. Silakan login.' };
+    }
+
+    // New registered user ALWAYS defaults to 'viewer'
+    const newUser = {
+      id: `usr-${Date.now()}`,
+      name: name.trim(),
+      email: normalizedEmail,
+      password: password,
+      role: 'viewer',
+      createdAt: new Date().toISOString()
+    };
+
+    const nextUsers = [...users, newUser];
+    setUsers(nextUsers);
+    try {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(nextUsers));
+    } catch (e) {
+      console.error('Failed to save users to localStorage', e);
+    }
+
+    return { success: true, user: newUser };
+  };
+
+  const updateUserRole = (userId, newRole) => {
+    if (currentUser?.role !== 'superadmin') {
+      return { success: false, error: 'Hanya Super Admin yang berwenang mengubah role pengguna.' };
+    }
+
+    const nextUsers = users.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
+    setUsers(nextUsers);
+    try {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(nextUsers));
+    } catch (e) {
+      console.error('Failed to update users in localStorage', e);
+    }
+
+    if (currentUser?.id === userId) {
+      const updatedSelf = { ...currentUser, role: newRole };
+      setCurrentUser(updatedSelf);
+      sessionStorage.setItem('verity_current_user', JSON.stringify(updatedSelf));
+    }
+
+    return { success: true };
+  };
+
+  const deleteUser = (userId) => {
+    if (currentUser?.role !== 'superadmin') {
+      return { success: false, error: 'Hanya Super Admin yang berwenang menghapus pengguna.' };
+    }
+    if (currentUser?.id === userId) {
+      return { success: false, error: 'Tidak dapat menghapus akun Anda sendiri saat sedang aktif.' };
+    }
+
+    const nextUsers = users.filter((u) => u.id !== userId);
+    setUsers(nextUsers);
+    try {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(nextUsers));
+    } catch (e) {
+      console.error('Failed to save users', e);
+    }
+    return { success: true };
+  };
+
+  const loginAdmin = (password) => {
+    const res = loginUser({ email: '', password });
+    return res.success;
   };
 
   const logoutAdmin = () => {
     setIsAuthenticated(false);
+    setCurrentUser(null);
     sessionStorage.removeItem('verity_admin_auth');
+    sessionStorage.removeItem('verity_current_user');
   };
 
   // --- Portfolio CRUD ---
@@ -367,6 +540,12 @@ export function DataProvider({ children }) {
         isAdminOpen,
         setIsAdminOpen,
         isAuthenticated,
+        currentUser,
+        users,
+        loginUser,
+        registerUser,
+        updateUserRole,
+        deleteUser,
         loginAdmin,
         logoutAdmin,
         // Portfolio
@@ -407,3 +586,5 @@ export function useData() {
   }
   return context;
 }
+
+export const useAuth = useData;

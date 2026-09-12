@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle } from 'lucide-react';
+import { Menu, X, Shield, LogOut } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { useTransition } from '../context/TransitionContext';
 
 export default function Navbar() {
@@ -45,6 +46,7 @@ export default function Navbar() {
   }, []);
 
   const { navigateTo } = useTransition();
+  const { currentUser, isAuthenticated, logout, navigate } = useAuth();
 
   const handleNavClick = (e, href, label) => {
     e.preventDefault();
@@ -105,30 +107,77 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Clean Primary CTA Button */}
-          <div className="hidden md:flex items-center gap-3">
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-black px-4 py-2 text-sm font-medium rounded-md hover:bg-zinc-200 transition-all cursor-pointer inline-flex items-center gap-2 shadow-xs"
-            >
-              <MessageCircle className="w-4 h-4 fill-current" />
-              <span>Initiate Chat</span>
-            </a>
+          {/* Auth Actions (Login & Register or User Controls) */}
+          <div className="hidden md:flex items-center gap-2.5">
+            {!isAuthenticated ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate('/login')}
+                  className="px-3.5 py-1.5 text-xs sm:text-sm font-medium text-zinc-300 hover:text-white rounded-md hover:bg-zinc-900 border border-transparent hover:border-zinc-800 transition-all cursor-pointer min-h-[36px]"
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/register')}
+                  className="bg-white text-black px-4 py-1.5 text-xs sm:text-sm font-medium rounded-md hover:bg-zinc-200 transition-all cursor-pointer shadow-xs min-h-[36px]"
+                >
+                  Register
+                </button>
+              </>
+            ) : (
+              <>
+                {(currentUser?.role === 'superadmin' || currentUser?.role === 'staff') && (
+                  <button
+                    type="button"
+                    onClick={() => navigate('/admin')}
+                    className="bg-white text-black px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-md hover:bg-zinc-200 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-xs min-h-[36px]"
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>Admin Panel</span>
+                  </button>
+                )}
+                {currentUser?.role === 'viewer' && (
+                  <span className="text-xs text-zinc-400 font-mono px-2 py-1 rounded bg-zinc-900 border border-zinc-800">
+                    {currentUser.name || 'Viewer'}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="text-xs text-zinc-400 hover:text-rose-400 px-2.5 py-1.5 rounded-md hover:bg-zinc-900 border border-transparent hover:border-zinc-800 transition-all cursor-pointer min-h-[36px] inline-flex items-center gap-1"
+                  title={`Logout (${currentUser?.name || ''})`}
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Logout</span>
+                </button>
+              </>
+            )}
           </div>
 
-          {/* Mobile Menu Toggle & WhatsApp CTA */}
+          {/* Mobile Menu Toggle & Auth Quick Link */}
           <div className="flex md:hidden items-center gap-2">
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 text-zinc-300 bg-zinc-900 border border-zinc-800 rounded-md text-xs"
-              title="Chat WhatsApp"
-            >
-              <MessageCircle className="w-4 h-4" />
-            </a>
+            {!isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => navigate('/login')}
+                className="px-3 py-1.5 text-xs font-medium text-zinc-200 bg-zinc-900 border border-zinc-800 rounded-md hover:bg-zinc-800 transition-colors"
+              >
+                Login
+              </button>
+            ) : (
+              (currentUser?.role === 'superadmin' || currentUser?.role === 'staff') && (
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin')}
+                  className="px-2.5 py-1.5 text-xs font-medium text-black bg-white rounded-md hover:bg-zinc-200 transition-colors inline-flex items-center gap-1"
+                >
+                  <Shield className="w-3 h-3" />
+                  <span>Admin</span>
+                </button>
+              )
+            )}
 
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -168,16 +217,48 @@ export default function Navbar() {
                 );
               })}
             </div>
-            <div className="pt-2">
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 bg-white text-black py-2.5 px-4 rounded-md text-sm font-medium hover:bg-zinc-200 transition-all"
-              >
-                <MessageCircle className="w-4 h-4 fill-current" />
-                <span>WhatsApp Consultation</span>
-              </a>
+            
+            {/* Mobile Drawer Auth Actions */}
+            <div className="pt-3 border-t border-zinc-800/80">
+              {!isAuthenticated ? (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setIsOpen(false); navigate('/login'); }}
+                    className="w-full py-2.5 px-3 text-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-200 text-xs font-medium hover:bg-zinc-800 transition-colors cursor-pointer"
+                  >
+                    Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setIsOpen(false); navigate('/register'); }}
+                    className="w-full py-2.5 px-3 text-center rounded-md bg-white text-black text-xs font-medium hover:bg-zinc-200 transition-colors cursor-pointer"
+                  >
+                    Register
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {(currentUser?.role === 'superadmin' || currentUser?.role === 'staff') && (
+                    <button
+                      type="button"
+                      onClick={() => { setIsOpen(false); navigate('/admin'); }}
+                      className="w-full flex items-center justify-center gap-2 bg-white text-black py-2.5 px-4 rounded-md text-xs font-medium hover:bg-zinc-200 transition-colors cursor-pointer"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Buka Admin Panel</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => { setIsOpen(false); logout(); }}
+                    className="w-full flex items-center justify-center gap-2 border border-zinc-800 bg-zinc-900 text-rose-400 py-2.5 px-4 rounded-md text-xs font-medium hover:bg-zinc-850 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout ({currentUser?.name || 'User'})</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </>

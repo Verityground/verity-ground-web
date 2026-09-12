@@ -4,7 +4,7 @@ import { useData } from '../context/DataContext';
 import { useTransition } from '../context/TransitionContext';
 
 export default function Footer() {
-  const { data, setIsAdminOpen } = useData();
+  const { data } = useData();
   const { navigateTo } = useTransition();
 
   const scrollToTop = () => {

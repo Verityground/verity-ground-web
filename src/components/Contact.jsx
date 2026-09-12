@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { MessageCircle, Mail, MapPin, ChevronDown, ChevronUp, Phone } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
-export default function Contact() {
+function Contact() {
   const { data } = useData();
 
   const [formData, setFormData] = useState({
     name: '',
-    serviceType: data.services?.[0]?.title || 'Website & Web App',
+    serviceType: data?.services?.[0]?.title || 'Website & Web App Development',
     budgetRange: 'Rp 5jt - 15jt',
     timeline: '1 Bulan',
     notes: '',
@@ -21,17 +21,21 @@ export default function Contact() {
   };
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText(data.email);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2000);
+    if (data?.email) {
+      navigator.clipboard.writeText(data.email);
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    const formattedMsg = `Halo ${data.name},\n\nNama: ${formData.name || 'Calon Klien'}\nLayanan: ${formData.serviceType}\nPerkiraan Budget: ${formData.budgetRange}\nTarget Timeline: ${formData.timeline}\nCatatan Proyek: ${formData.notes || '-'}\n\nSaya ingin konsultasi detail proyek ini.`;
-    const waUrl = `https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(formattedMsg)}`;
+    const formattedMsg = `Halo ${data?.name || 'Verity Ground'},\n\nNama: ${formData.name || 'Calon Klien'}\nLayanan: ${formData.serviceType}\nPerkiraan Budget: ${formData.budgetRange}\nTarget Timeline: ${formData.timeline}\nCatatan Proyek: ${formData.notes || '-'}\n\nSaya ingin konsultasi detail proyek ini.`;
+    const waUrl = `https://wa.me/${data?.whatsappNumber || '6285693131477'}?text=${encodeURIComponent(formattedMsg)}`;
     window.open(waUrl, '_blank');
   };
+
+  const safeFaqs = Array.isArray(data?.faqs) ? data.faqs : [];
 
   return (
     <section id="contact" className="py-24 md:py-32 bg-transparent border-b border-zinc-800/40 relative">
@@ -78,7 +82,7 @@ export default function Contact() {
                   placeholder="Contoh: Budi Pratama (PT Maju Jaya)"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-zinc-500 transition-colors"
+                  className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-colors"
                 />
               </div>
 
@@ -92,18 +96,18 @@ export default function Contact() {
                     name="serviceType"
                     value={formData.serviceType}
                     onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white text-sm focus:outline-none focus:border-zinc-500 transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
+                    className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white text-sm focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                   >
-                    {data.services && data.services.length > 0 ? (
+                    {data?.services && data.services.length > 0 ? (
                       data.services.map((s) => (
                         <option key={s.id} value={s.title}>{s.title}</option>
                       ))
                     ) : (
                       <>
-                        <option value="Website & Web App">Website & Web App Development</option>
-                        <option value="Landing Page">Landing Page</option>
-                        <option value="Sistem Kustom">Sistem Kustom / ERP</option>
-                        <option value="Konsultasi Umum">Konsultasi Umum</option>
+                        <option value="Website & Web App Development">Website & Web App Development</option>
+                        <option value="Landing Page High-Conversion">Landing Page High-Conversion</option>
+                        <option value="Sistem Kustom / ERP">Sistem Kustom / ERP</option>
+                        <option value="Konsultasi Arsitektur Software">Konsultasi Arsitektur Software</option>
                       </>
                     )}
                   </select>
@@ -118,7 +122,7 @@ export default function Contact() {
                     name="budgetRange"
                     value={formData.budgetRange}
                     onChange={(e) => setFormData({ ...formData, budgetRange: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white text-sm focus:outline-none focus:border-zinc-500 transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
+                    className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white text-sm focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                   >
                     <option value="< Rp 5 Juta">&lt; Rp 5 Juta (Landing Page Simpel)</option>
                     <option value="Rp 5jt - 15jt">Rp 5 Juta - 15 Juta</option>
@@ -137,7 +141,7 @@ export default function Contact() {
                   name="timeline"
                   value={formData.timeline}
                   onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white text-sm focus:outline-none focus:border-zinc-500 transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
+                  className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white text-sm focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                 >
                   <option value="Sangat Mendesak (< 2 Minggu)">Sangat Mendesak (&lt; 2 Minggu)</option>
                   <option value="1 Bulan">1 Bulan</option>
@@ -157,13 +161,13 @@ export default function Contact() {
                   placeholder="Deskripsikan gambaran fitur utama atau arsitektur yang Anda butuhkan..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-zinc-500 transition-colors resize-none"
+                  className="w-full px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-md text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-colors resize-none"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 px-6 bg-white text-black font-medium text-sm rounded-md hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                className="w-full py-3 px-6 bg-white text-black font-semibold text-sm rounded-md hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm min-h-[44px]"
               >
                 <MessageCircle className="w-4 h-4 fill-current" />
                 <span>Kirim & Mulai Konsultasi WhatsApp</span>
@@ -181,10 +185,11 @@ export default function Contact() {
               </h3>
               
               <a
-                href={`https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(data.whatsappMessage || 'Halo Verity Ground')}`}
+                href={`https://wa.me/${data?.whatsappNumber || '6285693131477'}?text=${encodeURIComponent(data?.whatsappMessage || 'Halo Verity Ground')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-900/40 border border-zinc-800/60 hover:border-zinc-700 transition-colors group"
+                aria-label="Hubungi kami via WhatsApp resmi"
+                className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-900/40 border border-zinc-800/60 hover:border-zinc-700 transition-colors group min-h-[44px]"
               >
                 <div className="w-9 h-9 rounded-md bg-zinc-800 flex items-center justify-center text-white shrink-0">
                   <Phone className="w-4 h-4" />
@@ -192,7 +197,7 @@ export default function Contact() {
                 <div className="flex-1">
                   <div className="text-[11px] text-zinc-400">WhatsApp Resmi</div>
                   <div className="text-sm font-semibold text-white">
-                    +{data.whatsappNumber}
+                    +{data?.whatsappNumber || '6285693131477'}
                   </div>
                 </div>
               </a>
@@ -201,8 +206,9 @@ export default function Contact() {
                 onClick={handleCopyEmail}
                 role="button"
                 tabIndex={0}
+                aria-label="Salin alamat email studio"
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCopyEmail(); }}
-                className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-900/40 border border-zinc-800/60 hover:border-zinc-700 transition-colors cursor-pointer group"
+                className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-900/40 border border-zinc-800/60 hover:border-zinc-700 transition-colors cursor-pointer group min-h-[44px]"
               >
                 <div className="w-9 h-9 rounded-md bg-zinc-800 flex items-center justify-center text-white shrink-0">
                   <Mail className="w-4 h-4" />
@@ -210,22 +216,22 @@ export default function Contact() {
                 <div className="flex-1">
                   <div className="text-[11px] text-zinc-400">Email Resmi</div>
                   <div className="text-sm font-semibold text-white">
-                    {data.email}
+                    {data?.email || 'verityground@gmail.com'}
                   </div>
                 </div>
-                <span className="text-xs text-zinc-500">
-                  {copiedEmail ? 'Copied!' : 'Salin'}
+                <span className="text-xs text-zinc-400 group-hover:text-white transition-colors">
+                  {copiedEmail ? 'Disalin!' : 'Salin'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-900/40 border border-zinc-800/60">
+              <div className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-900/40 border border-zinc-800/60 min-h-[44px]">
                 <div className="w-9 h-9 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 shrink-0">
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="text-[11px] text-zinc-400">Lokasi Studio</div>
                   <div className="text-sm font-semibold text-white">
-                    {data.location}
+                    {data?.location || 'Jakarta & Tangerang, Indonesia'}
                   </div>
                 </div>
               </div>
@@ -238,21 +244,23 @@ export default function Contact() {
               </h4>
 
               <div className="divide-y divide-zinc-800/60">
-                {data.faqs?.map((faq, idx) => (
-                  <div key={idx} className="py-3">
+                {safeFaqs.map((faq, idx) => (
+                  <div key={faq.id || idx} className="py-3">
                     <button
+                      type="button"
                       onClick={() => toggleFaq(idx)}
-                      className="w-full text-left flex items-center justify-between text-sm font-medium text-zinc-200 hover:text-white transition-colors cursor-pointer gap-2"
+                      aria-expanded={faqOpen === idx}
+                      className="w-full text-left flex items-center justify-between text-sm font-medium text-zinc-200 hover:text-white transition-colors cursor-pointer gap-2 py-1 min-h-[36px]"
                     >
-                      <span>{faq.q}</span>
+                      <span className="leading-snug">{faq.q}</span>
                       {faqOpen === idx ? (
-                        <ChevronUp className="w-4 h-4 text-zinc-400 shrink-0" />
+                        <ChevronUp className="w-4 h-4 text-zinc-300 shrink-0" />
                       ) : (
                         <ChevronDown className="w-4 h-4 text-zinc-500 shrink-0" />
                       )}
                     </button>
                     {faqOpen === idx && (
-                      <div className="pt-2 text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                      <div className="pt-2 text-xs sm:text-sm text-zinc-400 leading-relaxed animate-fade-in">
                         {faq.a}
                       </div>
                     )}
@@ -269,3 +277,5 @@ export default function Contact() {
     </section>
   );
 }
+
+export default Contact;

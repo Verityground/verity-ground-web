@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { Layers, X, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
+const getTechList = (tech) => {
+  if (Array.isArray(tech)) return tech;
+  if (typeof tech === 'string') return tech.split(',').map((t) => t.trim()).filter(Boolean);
+  return [];
+};
+
 export default function Portfolio() {
   const { data } = useData();
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeCategory, setActiveCategory] = useState('All');
 
-  // Derive unique categories dynamically
+
   const categories = ['All', ...new Set((data.portfolio || []).map((p) => p.category).filter(Boolean))];
 
   const filteredProjects = activeCategory === 'All'
@@ -122,7 +128,7 @@ export default function Portfolio() {
 
                     {/* Tech Stack Chips (Monospace font allowed here) */}
                     <div className="flex flex-wrap gap-1.5">
-                      {project.tech?.map((tag, tIdx) => (
+                      {getTechList(project.tech).map((tag, tIdx) => (
                         <span
                           key={tIdx}
                           className="rounded-md border border-zinc-800 bg-zinc-900/50 px-2.5 py-0.5 text-[11px] font-mono text-zinc-400"
@@ -219,7 +225,7 @@ export default function Portfolio() {
                     Teknologi yang Digunakan
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {selectedProject.tech?.map((t, idx) => (
+                    {getTechList(selectedProject.tech).map((t, idx) => (
                       <span
                         key={idx}
                         className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-xs font-mono text-zinc-300"
